@@ -1,0 +1,53 @@
+{
+    "name": "ilib-loctool-webos-appinfo-json",
+    "version": "1.0.0",
+    "main": "AppinfoJsonFileType.js",
+    "description": "appinfo.json file handler plugin for webOS platform loctool",
+    "license": "Apache-2.0",
+    "keywords": [
+        "internationalization",
+        "i18n",
+        "localization",
+        "l10n",
+        "globalization",
+        "g11n",
+        "resources",
+        "json",
+        "translation",
+        "javascript"
+    ],
+    "author": {
+        "name": "Goun Lee",
+        "email": "goun.lee@lge.com"
+    },
+    "contributors": [
+        {
+            "name": "Goun Lee",
+            "email": "goun.lee@lge.com"
+        }
+    ],
+    "files": [
+        "README.md",
+        "LICENSE",
+        "AppinfoJsonFileType.js",
+        "AppinfoJsonFile.js"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/iLib-js/ilib-loctool-webos-appinfo-json.git"
+    },
+    "scripts": {
+        "dist": "npm pack",
+        "test": "node test/testSuite.js",
+        "debug": "node --inspect-brk test/testSuite.js",
+        "clean": "git clean -f -d *"
+    },
+    "bugs": {
+        "url": "https://github.com/iLib-js/ilib-loctool-webos-appinfo-json/issues"
+    },
+    "homepage": "https://github.com/iLib-js/ilib-loctool-webos-appinfo-json#readme",
+    "devDependencies": {
+        "loctool": "^2.2.0",
+        "nodeunit": "^0.11.3"
+    }
+}
