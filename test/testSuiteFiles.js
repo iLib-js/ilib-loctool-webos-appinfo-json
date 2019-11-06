@@ -18,5 +18,5 @@
 
 module.exports.files = [
     "testAppinfoJsonFileType.js",
-    "testJavaScriptFile.js"
+    "testAppinfoJsonFile.js"
 ];

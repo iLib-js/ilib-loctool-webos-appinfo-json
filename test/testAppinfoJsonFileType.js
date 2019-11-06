@@ -1,5 +1,5 @@
 /*
- * testAppinfoJsonFileType.js - test the HTML template file type handler object.
+ * testAppinfoJsonFileType.js - test the appinfo.json template file type handler object.
  *
  * Copyright © 2019, JEDLSoft
  *
@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-if (!JavaScriptFile) {
+if (!AppinfoJsonFileType) {
     var AppinfoJsonFileType = require("../AppinfoJsonFileType.js");
     var CustomProject =  require("loctool/lib/CustomProject.js");
 }
