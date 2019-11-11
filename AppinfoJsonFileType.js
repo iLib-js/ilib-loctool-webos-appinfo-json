@@ -20,17 +20,26 @@
 var fs = require("fs");
 var path = require("path");
 var log4js = require("log4js");
-
 var AppinfoJsonFile = require("./AppinfoJsonFile.js");
-
 var logger = log4js.getLogger("loctool.plugin.AppinfoJsonFileType");
 
 var AppinfoJsonFileType = function(project) {
     this.type = "json";
-    this.datatype = "json";
-    this.resourceType = "json";
 
+    /* In order to match proper xliff file.
+    *  datatype value is used to create reskey
+    */
+    var dataTypeMap = {
+        "webos-web":"javascript",
+        "webos-qml": "x-qml",
+        "webos-cpp": "cpp",
+        "webos-c": "cpp"
+    }
+
+    this.datatype = dataTypeMap[project.options.projectType] || "javascript";
+    this.resourceType = "json";
     this.project = project;
+
     this.API = project.getAPI();
 
     this.extensions = [".json"];
@@ -38,7 +47,30 @@ var AppinfoJsonFileType = function(project) {
     this.extracted = this.API.newTranslationSet(project.getSourceLocale());
     this.newres = this.API.newTranslationSet(project.getSourceLocale());
     this.pseudo = this.API.newTranslationSet(project.getSourceLocale());
+
+    this.schema = loadSchema();
 };
+
+function loadSchema() {
+    var localizeKeys = [];
+    var schemaFilePath = path.join(process.env.PWD, "node_modules", "ilib-loctool-webos-appinfo-json", "schema/appinfo.schema.json");
+    logger.debug("AppinfoJsonFileTyp load Schema File " + schemaFilePath + "?");
+    var loadSchemaFile, schemaData;
+
+    if (fs.existsSync(schemaFilePath)) {
+        loadSchemaFile = fs.readFileSync(schemaFilePath, "utf-8");
+        schemaData = JSON.parse(loadSchemaFile);
+    } else {
+        logger.warn("Could not open schema file: " + schemaFilePath);
+    }
+
+    for (var key in schemaData.properties) {
+        if (schemaData.properties[key].localizable == true) {
+            localizeKeys.push(key);
+        }
+    }
+    return localizeKeys;
+}
 
 /**
  * Return true if the given path is a java file and is handled
@@ -53,7 +85,6 @@ AppinfoJsonFileType.prototype.handles = function(pathName) {
     if (!pathName) return false;
     
     return (pathName === "appinfo.json") ? true : false
-    
 };
 
 AppinfoJsonFileType.prototype.name = function() {
@@ -164,6 +195,32 @@ AppinfoJsonFileType.prototype.getResourceTypes = function() {
 AppinfoJsonFileType.prototype.getResourceFileType = function() {
     return AppinfoJsonFileType;
 };
+
+/**
+ * Find or create the resource file object for the given project, context,
+ * and locale.
+ *
+ * @param {String} locale the name of the locale in which the resource
+ * file will reside
+ * @return {JavaScriptResourceFile} the Android resource file that serves the
+ * given project, context, and locale.
+ */
+AppinfoJsonFileType.prototype.getResourceFile = function(locale) {
+    var key = locale || this.project.sourceLocale;
+
+    var resfile = this.resourceFiles && this.resourceFiles[key];
+
+    if (!resfile) {
+        resfile = this.resourceFiles[key] = new AppinfoJsonFileType({
+            project: this.project,
+            locale: key
+        });
+
+        logger.trace("Defining new resource file");
+    }
+
+    return resfile;
+}
 
 /**
  * Return the translation set containing all of the extracted

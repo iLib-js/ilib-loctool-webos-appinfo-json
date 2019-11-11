@@ -110,46 +110,33 @@ AppinfoJsonFile.prototype.makeKey = function(source) {
  */
 AppinfoJsonFile.prototype.parse = function(data) {
     logger.debug("Extracting strings from " + this.pathName);
+    var schema = this.type.schema;
+    var parsedData = JSON.parse(data);
     this.resourceIndex = 0;
 
-    var comment, match, key;
-
-    reGetString.lastIndex = 0; // just to be safe
-    var result = reGetString.exec(data);
-    while (result && result.length > 1 && result[3]) {
-        // different matches for single and double quotes
-        match = (result[3][0] === '"') ? result[4] : result[6];
-
-        if (match && match.length) {
-            logger.trace("Found string key: " + this.makeKey(match) + ", string: '" + match + "'");
-
-            var last = data.indexOf('\n', reGetString.lastIndex);
-            last = (last === -1) ? data.length : last;
-            var line = data.substring(reGetString.lastIndex, last);
-            var commentResult = reI18nComment.exec(line);
-            comment = (commentResult && commentResult.length > 1) ? commentResult[1] : undefined;
-
+    for (var i =0; i < schema.length; i++) {
+        if (parsedData[schema[i]]) {
             var r = this.API.newResource({
                 resType: "string",
                 project: this.project.getProjectId(),
-                key: AppinfoJsonFile.unescapeString(match),
+                key: AppinfoJsonFile.unescapeString(parsedData[schema[i]]),
                 sourceLocale: this.project.sourceLocale,
-                source: AppinfoJsonFile.cleanString(match),
+                source: AppinfoJsonFile.cleanString(parsedData[schema[i]]),
                 autoKey: true,
                 pathName: this.pathName,
                 state: "new",
-                comment: comment,
+                comment: undefined,
                 datatype: this.type.datatype,
                 index: this.resourceIndex++
             });
             this.set.add(r);
-        } else {
-            logger.warn("Warning: Bogus empty string in get string call: ");
-            logger.warn("... " + data.substring(result.index, reGetString.lastIndex) + " ...");
         }
-        result = reGetString.exec(data);
+        else {
+            logger.warn("Warning: Bogus empty string in get string call: ");
+            //logger.warn("... " + data.substring(result.index, reGetString.lastIndex) + " ...");
+        }
     }
- 
+
     // now check for and report on errors in the source
     this.API.utils.generateWarnings(data, reGetStringBogusConcatenation1,
         "Warning: string concatenation is not allowed in the RB.getString() parameters:",
