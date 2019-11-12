@@ -42,14 +42,14 @@ module.exports.appinfojsonfiletype = {
         test.expect(2);
         var htf = new AppinfoJsonFileType(p);
         test.ok(htf);
-        test.ok(htf.handles("appinfo"));
+        test.ok(htf.handles("appinfo.json"));
         test.done();
     },
     testAppinfoJsonFileTypeHandlesJSFalseClose: function(test) {
         test.expect(2);
         var htf = new AppinfoJsonFileType(p);
         test.ok(htf);
-        test.ok(!htf.handles("foojs"));
+        test.ok(!htf.handles("foo.js"));
         test.done();
     }
 };

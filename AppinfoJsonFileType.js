@@ -25,30 +25,33 @@ var logger = log4js.getLogger("loctool.plugin.AppinfoJsonFileType");
 
 var AppinfoJsonFileType = function(project) {
     this.type = "json";
-
-    /* In order to match proper xliff file.
-    *  datatype value is used to create reskey
-    */
-    var dataTypeMap = {
-        "webos-web":"javascript",
-        "webos-qml": "x-qml",
-        "webos-cpp": "cpp",
-        "webos-c": "cpp"
-    }
-
-    this.datatype = dataTypeMap[project.options.projectType] || "javascript";
     this.resourceType = "json";
     this.project = project;
-
-    this.API = project.getAPI();
-
     this.extensions = [".json"];
 
-    this.extracted = this.API.newTranslationSet(project.getSourceLocale());
-    this.newres = this.API.newTranslationSet(project.getSourceLocale());
-    this.pseudo = this.API.newTranslationSet(project.getSourceLocale());
+    if (project.jsonType === "resource") {
+        this.resourceFiles = {};
+    } else {
 
-    this.schema = loadSchema();
+        /* in order to match proper xliff
+        * datatype value is using to create reskey
+        */
+        var dataTypeMap = {
+            "webos-web":"javascript",
+            "webos-qml": "x-qml",
+            "webos-cpp": "cpp",
+            "webos-c": "cpp"
+        }
+
+        this.datatype = dataTypeMap[project.options.projectType] || "javascript";
+
+        this.API = project.getAPI();
+        this.extracted = this.API.newTranslationSet(project.getSourceLocale());
+        this.newres = this.API.newTranslationSet(project.getSourceLocale());
+        this.pseudo = this.API.newTranslationSet(project.getSourceLocale());
+
+        this.schema = loadSchema();
+    }
 };
 
 function loadSchema() {
@@ -213,7 +216,8 @@ AppinfoJsonFileType.prototype.getResourceFile = function(locale) {
     if (!resfile) {
         resfile = this.resourceFiles[key] = new AppinfoJsonFileType({
             project: this.project,
-            locale: key
+            locale: key,
+            jsonType: "resource"
         });
 
         logger.trace("Defining new resource file");

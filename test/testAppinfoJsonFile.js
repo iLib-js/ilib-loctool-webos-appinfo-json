@@ -25,7 +25,6 @@ if (!AppinfoJsonFile) {
 
 var p = new CustomProject({
     id: "app",
-    plugins: ["../."],
     sourceLocale: "en-US"
     }, "./test/testfiles", {
     locales:["en-GB"]
