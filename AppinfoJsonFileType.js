@@ -29,29 +29,24 @@ var AppinfoJsonFileType = function(project) {
     this.project = project;
     this.extensions = [".json"];
 
-    if (project.jsonType === "resource") {
-        this.resourceFiles = {};
-    } else {
-
-        /* in order to match proper xliff
-        * datatype value is using to create reskey
-        */
-        var dataTypeMap = {
-            "webos-web":"javascript",
-            "webos-qml": "x-qml",
-            "webos-cpp": "cpp",
-            "webos-c": "cpp"
-        }
-
-        this.datatype = dataTypeMap[project.options.projectType] || "javascript";
-
-        this.API = project.getAPI();
-        this.extracted = this.API.newTranslationSet(project.getSourceLocale());
-        this.newres = this.API.newTranslationSet(project.getSourceLocale());
-        this.pseudo = this.API.newTranslationSet(project.getSourceLocale());
-
-        this.schema = loadSchema();
+    /* in order to match proper xliff
+    * datatype value is using to create reskey
+    */
+    var dataTypeMap = {
+        "webos-web":"javascript",
+        "webos-qml": "x-qml",
+        "webos-cpp": "cpp",
+        "webos-c": "cpp"
     }
+
+    this.datatype = dataTypeMap[project.options.projectType] || "javascript";
+
+    this.API = project.getAPI();
+    this.extracted = this.API.newTranslationSet(project.getSourceLocale());
+    this.newres = this.API.newTranslationSet(project.getSourceLocale());
+    this.pseudo = this.API.newTranslationSet(project.getSourceLocale());
+
+    this.schema = loadSchema();
 };
 
 function loadSchema() {
@@ -101,76 +96,10 @@ AppinfoJsonFileType.prototype.name = function() {
  * In yet other cases, nothing is written out, as the each of
  * the files themselves are localized individually, so there
  * are no aggregated strings.
- * @param {TranslationSet} translations the set of translations from the
- * repository
- * @param {Array.<String>} locales the list of locales to localize to
  */
 AppinfoJsonFileType.prototype.write = function(translations, locales) {
-    // distribute all the resources to their resource files
-    // and then let them write themselves out
-
-    var resFileType = this.project.getResourceFileType(this.resourceType);
-
-    var res, file,
-        resources = this.extracted.getAll(),
-        db = this.project.db,
-        translationLocales = locales.filter(function(locale) {
-            return locale !== this.project.sourceLocale && locale !== this.project.pseudoLocale;
-        }.bind(this));
-
-    for (var i = 0; i < resources.length; i++) {
-        res = resources[i];
-
-        // for each extracted string, write out the translations of it
-        translationLocales.forEach(function(locale) {
-            logger.trace("Localizing JavaScript strings to " + locale);
-
-            db.getResourceByCleanHashKey(res.cleanHashKeyForTranslation(locale), function(err, translated) {
-                var r = translated;
-                if (!translated || ( this.API.utils.cleanString(res.getSource()) !== this.API.utils.cleanString(r.getSource()) &&
-                    this.API.utils.cleanString(res.getSource()) !== this.API.utils.cleanString(r.getKey()))) {
-                    if (r) {
-                        logger.trace("extracted   source: " + this.API.utils.cleanString(res.getSource()));
-                        logger.trace("translation source: " + this.API.utils.cleanString(r.getSource()));
-                    }
-                    var note = r && 'The source string has changed. Please update the translation to match if necessary. Previous source: "' + r.getSource() + '"';
-                    var newres = res.clone();
-                    newres.setTargetLocale(locale);
-                    newres.setTarget((r && r.getTarget()) || res.getSource());
-                    newres.setState("new");
-                    newres.setComment(note);
-
-                    this.newres.add(newres);
-
-                    logger.trace("No translation for " + res.reskey + " to " + locale);
-                } else {
-                    if (res.reskey != r.reskey) {
-                        // if reskeys don't match, we matched on cleaned string.
-                        //so we need to overwrite reskey of the translated resource to match
-                        r = r.clone();
-                        r.reskey = res.reskey;
-                    }
-
-                    file = resFileType.getResourceFile(locale);
-                    file.addResource(r);
-                    logger.trace("Added " + r.reskey + " to " + file.pathName);
-                }
-            }.bind(this));
-        }.bind(this));
-    }
-
-    resources = this.pseudo.getAll().filter(function(resource) {
-        return resource.datatype === this.datatype;
-    }.bind(this));
-
-    for (var i = 0; i < resources.length; i++) {
-        res = resources[i];
-        if (res.getTargetLocale() !== this.project.sourceLocale && res.getSource() !== res.getTarget()) {
-            file = resFileType.getResourceFile(res.getTargetLocale());
-            file.addResource(res);
-            logger.trace("Added " + res.reskey + " to " + file.pathName);
-        }
-    }
+    // templates are localized individually, so we don't have to
+    // write out the resources
 };
 
 AppinfoJsonFileType.prototype.newFile = function(path) {
@@ -199,31 +128,9 @@ AppinfoJsonFileType.prototype.getResourceFileType = function() {
     return AppinfoJsonFileType;
 };
 
-/**
- * Find or create the resource file object for the given project, context,
- * and locale.
- *
- * @param {String} locale the name of the locale in which the resource
- * file will reside
- * @return {JavaScriptResourceFile} the Android resource file that serves the
- * given project, context, and locale.
- */
+
 AppinfoJsonFileType.prototype.getResourceFile = function(locale) {
-    var key = locale || this.project.sourceLocale;
-
-    var resfile = this.resourceFiles && this.resourceFiles[key];
-
-    if (!resfile) {
-        resfile = this.resourceFiles[key] = new AppinfoJsonFileType({
-            project: this.project,
-            locale: key,
-            jsonType: "resource"
-        });
-
-        logger.trace("Defining new resource file");
-    }
-
-    return resfile;
+    return {};
 }
 
 /**

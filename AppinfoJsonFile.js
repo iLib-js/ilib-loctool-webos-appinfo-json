@@ -183,8 +183,40 @@ AppinfoJsonFile.prototype.getTranslationSet = function() {
     return this.set;
 }
 
-// we don't localize or write javascript source files
-AppinfoJsonFile.prototype.localize = function() {};
+// we don't localize or write appinfo.json source files
 AppinfoJsonFile.prototype.write = function() {};
+
+/**
+ * Return the location on disk where the version of this file localized
+ * for the given locale should be written.
+ * @param {String] locale the locale spec for the target locale
+ * @returns {String} the localized path name
+ */
+AppinfoJsonFile.prototype.getLocalizedPath = function(locale) {
+};
+
+/**
+ * Localize the text of the current file to the given locale and return
+ * the results.
+ *
+ * @param {TranslationSet} translations the current set of translations
+ * @param {String} locale the locale to translate to
+ * @returns {String} the localized text of this file
+ */
+AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
+
+}
+
+/**
+  * Localize the contents of this HTML file and write out the
+  * localized HTML file to a different file path.
+  *
+  * @param {TranslationSet} translations the current set of
+  * translations
+  * @param {Array.<String>} locales array of locales to translate to
+  */
+AppinfoJsonFile.prototype.localize = function(translations, locales) {
+    // don't localize if there is no text
+}
 
 module.exports = AppinfoJsonFile;
