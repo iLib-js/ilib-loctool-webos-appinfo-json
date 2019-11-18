@@ -19,8 +19,10 @@
 
 var fs = require("fs");
 var path = require("path");
-var log4js = require("log4js");
+var Locale = require("ilib/lib/Locale.js");
+var LocaleMatcher = require("ilib/lib/LocaleMatcher.js");
 
+var log4js = require("log4js");
 var logger = log4js.getLogger("loctool.plugin.AppinfoJsonFile");
 
 /**
@@ -33,10 +35,18 @@ var logger = log4js.getLogger("loctool.plugin.AppinfoJsonFile");
  * @param {FileType} type the file type of this instance
  */
 var AppinfoJsonFile = function(props) {
-    this.project = props.project;
+    var lanDefaultLocale, propsLocale;
     this.pathName = props.pathName;
-    this.type = props.type;
-    this.API = props.project.getAPI();
+    this.baseLocale = false;
+
+    if (props) {
+        this.project = props.project;
+        this.locale = new LocaleMatcher({locale:props.locale}).getLikelyLocaleMinimal();
+        this.API = props.project.getAPI();
+
+        langDefaultLocale = new LocaleMatcher({locale: this.locale.language});
+        this.baseLocale = langDefaultLocale.getLikelyLocaleMinimal().getSpec() === this.locale.getSpec();
+    }
 
     this.set = this.API.newTranslationSet(this.project ? this.project.sourceLocale : "zxx-XX");
 };
@@ -103,6 +113,28 @@ AppinfoJsonFile.prototype.makeKey = function(source) {
     return AppinfoJsonFile.unescapeString(source);
 };
 
+AppinfoJsonFile.prototype.loadSchema = function(source) {
+    console.log("loadSchema");
+    var localizeKeys = [];
+    var schemaFilePath = path.join(process.env.PWD, "node_modules", "ilib-loctool-webos-appinfo-json", "schema/appinfo.schema.json");
+    logger.debug("AppinfoJsonFileTyp load Schema File " + schemaFilePath + "?");
+    var loadSchemaFile, schemaData;
+
+    if (fs.existsSync(schemaFilePath)) {
+        loadSchemaFile = fs.readFileSync(schemaFilePath, "utf-8");
+        schemaData = JSON.parse(loadSchemaFile);
+    } else {
+        logger.warn("Could not open schema file: " + schemaFilePath);
+    }
+
+    for (var key in schemaData.properties) {
+        if (schemaData.properties[key].localizable == true) {
+            localizeKeys.push(key);
+        }
+    }
+    return localizeKeys;
+};
+
 /**
  * Parse the data string looking for the localizable strings and add them to the
  * project's translation set.
@@ -110,18 +142,20 @@ AppinfoJsonFile.prototype.makeKey = function(source) {
  */
 AppinfoJsonFile.prototype.parse = function(data) {
     logger.debug("Extracting strings from " + this.pathName);
-    var schema = this.type.schema;
-    var parsedData = JSON.parse(data);
+    if (!this.schema) {
+        this.schema = this.loadSchema();
+    }
+    this.parsedData = JSON.parse(data);
     this.resourceIndex = 0;
 
-    for (var i =0; i < schema.length; i++) {
-        if (parsedData[schema[i]]) {
+    for (var i =0; i < this.schema.length; i++) {
+        if (this.parsedData[schema[i]]) {
             var r = this.API.newResource({
                 resType: "string",
                 project: this.project.getProjectId(),
-                key: AppinfoJsonFile.unescapeString(parsedData[schema[i]]),
+                key: AppinfoJsonFile.unescapeString(this.parsedData[this.schema[i]]),
                 sourceLocale: this.project.sourceLocale,
-                source: AppinfoJsonFile.cleanString(parsedData[schema[i]]),
+                source: AppinfoJsonFile.cleanString(this.parsedData[this.schema[i]]),
                 autoKey: true,
                 pathName: this.pathName,
                 state: "new",
@@ -193,6 +227,20 @@ AppinfoJsonFile.prototype.write = function() {};
  * @returns {String} the localized path name
  */
 AppinfoJsonFile.prototype.getLocalizedPath = function(locale) {
+    console.log("AppinfoJsonFile getLocalizedPath()");
+    //locale = locale || this.locale;
+    var rootPath = this.project.getResourceDirs("json")[0] || ".";
+    var fullPath = "";
+
+    var splitLocale = locale.split("-");
+    if (this.baseLocale) {
+        fullPath = "/" + splitLocale[0];
+    } else {
+        for (var i=0; i < splitLocale.length; i++) {
+            fullPath = "/"+ splitLocale[i];
+        }
+    }
+    return rootPath + fullPath;
 };
 
 /**
@@ -204,7 +252,29 @@ AppinfoJsonFile.prototype.getLocalizedPath = function(locale) {
  * @returns {String} the localized text of this file
  */
 AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
+    console.log("AppinfoJsonFile localizeText()");
+    var output = {};
+    for (var property in this.parsedData) {
+        if (this.schema.includes(property)){
+            var key = this.makeKey(this.API.utils.escapeInvalidChars(this.parsedData[property]));
+            var tester = this.API.newResource({
+                resType: "string",
+                project: this.project.getProjectId(),
+                sourceLocale: this.project.getSourceLocale(),
+                reskey: key,
+                //datatype: this.type.datatype || "javascript"
+                datatype: "javascript"
+            });
+            var hashkey = tester.hashKeyForTranslation(locale);
+            var translated = translations.getClean(hashkey);
+            output[property] = translated.target;
 
+        } else {
+            //:qoutput[property] = this.parsedData[property];
+        }
+
+    }
+    return output;
 }
 
 /**
@@ -217,6 +287,16 @@ AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
   */
 AppinfoJsonFile.prototype.localize = function(translations, locales) {
     // don't localize if there is no text
-}
+    console.log("AppinfoJsonFile localize()");
+   for (var i=0; i < locales.length; i++) {
+       if (!this.project.isSourceLocale(locales[i])) {
+            var pathName = this.getLocalizedPath(locales[i]);
+            var translatedOutput = this.localizeText(translations, locales[i]);
+            this.API.utils.makeDirs(pathName);
+            fs.writeFileSync(pathName + "/appinfo.json", JSON.stringify(translatedOutput, true, 4), "utf-8");
+            console.log("###########################")
+       }
+    }
+};
 
 module.exports = AppinfoJsonFile;

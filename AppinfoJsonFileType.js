@@ -45,30 +45,7 @@ var AppinfoJsonFileType = function(project) {
     this.extracted = this.API.newTranslationSet(project.getSourceLocale());
     this.newres = this.API.newTranslationSet(project.getSourceLocale());
     this.pseudo = this.API.newTranslationSet(project.getSourceLocale());
-
-    this.schema = loadSchema();
 };
-
-function loadSchema() {
-    var localizeKeys = [];
-    var schemaFilePath = path.join(process.env.PWD, "node_modules", "ilib-loctool-webos-appinfo-json", "schema/appinfo.schema.json");
-    logger.debug("AppinfoJsonFileTyp load Schema File " + schemaFilePath + "?");
-    var loadSchemaFile, schemaData;
-
-    if (fs.existsSync(schemaFilePath)) {
-        loadSchemaFile = fs.readFileSync(schemaFilePath, "utf-8");
-        schemaData = JSON.parse(loadSchemaFile);
-    } else {
-        logger.warn("Could not open schema file: " + schemaFilePath);
-    }
-
-    for (var key in schemaData.properties) {
-        if (schemaData.properties[key].localizable == true) {
-            localizeKeys.push(key);
-        }
-    }
-    return localizeKeys;
-}
 
 /**
  * Return true if the given path is a java file and is handled
