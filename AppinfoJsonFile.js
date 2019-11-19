@@ -35,18 +35,17 @@ var logger = log4js.getLogger("loctool.plugin.AppinfoJsonFile");
  * @param {FileType} type the file type of this instance
  */
 var AppinfoJsonFile = function(props) {
-    var lanDefaultLocale, propsLocale;
-    this.pathName = props.pathName;
+    var lanDefaultLocale, propsLocale;i
+
     this.baseLocale = false;
+    this.project = props.project;
+    this.pathName = props.pathName;
+    this.locale = new LocaleMatcher({locale:props.locale}).getLikelyLocaleMinimal();
+    this.API = props.project.getAPI();
 
-    if (props) {
-        this.project = props.project;
-        this.locale = new LocaleMatcher({locale:props.locale}).getLikelyLocaleMinimal();
-        this.API = props.project.getAPI();
-
-        langDefaultLocale = new LocaleMatcher({locale: this.locale.language});
-        this.baseLocale = langDefaultLocale.getLikelyLocaleMinimal().getSpec() === this.locale.getSpec();
-    }
+    langDefaultLocale = new LocaleMatcher({locale: this.locale.language});
+    this.baseLocale = langDefaultLocale.getLikelyLocaleMinimal().getSpec() === this.locale.getSpec();
+    this.type = props.type;
 
     // datatype value is using to create reskey
     var dataTypeMap = {
@@ -57,9 +56,7 @@ var AppinfoJsonFile = function(props) {
     }
 
     this.datatype = dataTypeMap[this.project.options.projectType] || "javascript";
-
     this.set = this.API.newTranslationSet(this.project ? this.project.sourceLocale : "zxx-XX");
-    this.newres = this.API.newTranslationSet(this.project ? this.project.sourceLocale : "zxx-XX");
 };
 
 /**
@@ -288,11 +285,13 @@ AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
                     project: this.project.getProjectId(),
                     sourceLocale: this.project.getSourceLocale(),
                     source: this.API.utils.escapeInvalidChars(text),
-                    autoKey: true,
+                    targetLocale: locale,
+                    target: this.API.utils.escapeInvalidChars(text),
+                    reskey: key,
                     state: "new",
                     datatype: this.datatype || "javascript"
                 });
-                this.newres.add(r);
+                this.type.newres.add(r);
             }
         } else {
             //:qoutput[property] = this.parsedData[property];
