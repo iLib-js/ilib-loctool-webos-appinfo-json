@@ -48,7 +48,18 @@ var AppinfoJsonFile = function(props) {
         this.baseLocale = langDefaultLocale.getLikelyLocaleMinimal().getSpec() === this.locale.getSpec();
     }
 
+    // datatype value is using to create reskey
+    var dataTypeMap = {
+        "webos-web":"javascript",
+        "webos-qml": "x-qml",
+        "webos-cpp": "cpp",
+        "webos-c": "cpp"
+    }
+
+    this.datatype = dataTypeMap[this.project.options.projectType] || "javascript";
+
     this.set = this.API.newTranslationSet(this.project ? this.project.sourceLocale : "zxx-XX");
+    this.newres = this.API.newTranslationSet(this.project ? this.project.sourceLocale : "zxx-XX");
 };
 
 /**
@@ -149,7 +160,7 @@ AppinfoJsonFile.prototype.parse = function(data) {
     this.resourceIndex = 0;
 
     for (var i =0; i < this.schema.length; i++) {
-        if (this.parsedData[schema[i]]) {
+        if (this.parsedData[this.schema[i]]) {
             var r = this.API.newResource({
                 resType: "string",
                 project: this.project.getProjectId(),
@@ -160,7 +171,7 @@ AppinfoJsonFile.prototype.parse = function(data) {
                 pathName: this.pathName,
                 state: "new",
                 comment: undefined,
-                datatype: this.type.datatype,
+                datatype: this.datatype,
                 index: this.resourceIndex++
             });
             this.set.add(r);
@@ -256,19 +267,33 @@ AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
     var output = {};
     for (var property in this.parsedData) {
         if (this.schema.includes(property)){
-            var key = this.makeKey(this.API.utils.escapeInvalidChars(this.parsedData[property]));
+            var text = this.parsedData[property];
+            var key = this.makeKey(this.API.utils.escapeInvalidChars(text));
             var tester = this.API.newResource({
                 resType: "string",
                 project: this.project.getProjectId(),
                 sourceLocale: this.project.getSourceLocale(),
                 reskey: key,
-                //datatype: this.type.datatype || "javascript"
-                datatype: "javascript"
+                datatype: this.datatype || "javascript"
             });
             var hashkey = tester.hashKeyForTranslation(locale);
             var translated = translations.getClean(hashkey);
-            output[property] = translated.target;
 
+            if (translated) {
+                output[property] = translated.target;
+            } else {
+                logger.trace("New string found: " + text);
+                var r = this.API.newResource({
+                    resType: "string",
+                    project: this.project.getProjectId(),
+                    sourceLocale: this.project.getSourceLocale(),
+                    source: this.API.utils.escapeInvalidChars(text),
+                    autoKey: true,
+                    state: "new",
+                    datatype: this.datatype || "javascript"
+                });
+                this.newres.add(r);
+            }
         } else {
             //:qoutput[property] = this.parsedData[property];
         }
