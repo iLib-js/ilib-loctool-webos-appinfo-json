@@ -35,7 +35,7 @@ var logger = log4js.getLogger("loctool.plugin.AppinfoJsonFile");
  * @param {FileType} type the file type of this instance
  */
 var AppinfoJsonFile = function(props) {
-    var lanDefaultLocale, propsLocale;i
+    var lanDefaultLocale, propsLocale;
 
     this.baseLocale = false;
     this.project = props.project;
@@ -122,9 +122,13 @@ AppinfoJsonFile.prototype.makeKey = function(source) {
 };
 
 AppinfoJsonFile.prototype.loadSchema = function(source) {
-    console.log("loadSchema");
-    var localizeKeys = [];
-    var schemaFilePath = path.join(process.env.PWD, "node_modules", "ilib-loctool-webos-appinfo-json", "schema/appinfo.schema.json");
+    var localizeKeys = [], schemaFilePath;
+    if (this.project.schema) {
+        schemaFilePath = path.join(process.env.PWD, this.project.schema);
+    } else {
+        console.log("general schema path");
+        schemaFilePath = path.join(process.env.PWD, "node_modules", "ilib-loctool-webos-appinfo-json", "schema/appinfo.schema.json");
+    }
     logger.debug("AppinfoJsonFileTyp load Schema File " + schemaFilePath + "?");
     var loadSchemaFile, schemaData;
 
