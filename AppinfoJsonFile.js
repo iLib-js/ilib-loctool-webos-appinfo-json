@@ -126,7 +126,6 @@ AppinfoJsonFile.prototype.loadSchema = function(source) {
     if (this.project.schema) {
         schemaFilePath = path.join(process.env.PWD, this.project.schema);
     } else {
-        console.log("general schema path");
         schemaFilePath = path.join(process.env.PWD, "node_modules", "ilib-loctool-webos-appinfo-json", "schema/appinfo.schema.json");
     }
     logger.debug("AppinfoJsonFileTyp load Schema File " + schemaFilePath + "?");
@@ -227,8 +226,6 @@ AppinfoJsonFile.prototype.write = function() {};
  * @returns {String} the localized path name
  */
 AppinfoJsonFile.prototype.getLocalizedPath = function(locale) {
-    console.log("AppinfoJsonFile getLocalizedPath()");
-    //locale = locale || this.locale;
     var rootPath = this.project.getResourceDirs("json")[0] || ".";
     var fullPath = "";
 
@@ -252,7 +249,6 @@ AppinfoJsonFile.prototype.getLocalizedPath = function(locale) {
  * @returns {String} the localized text of this file
  */
 AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
-    console.log("AppinfoJsonFile localizeText()");
     var output = {};
     for (var property in this.parsedData) {
         if (this.schema.includes(property)){
@@ -285,10 +281,7 @@ AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
                 });
                 this.type.newres.add(r);
             }
-        } else {
-            //:qoutput[property] = this.parsedData[property];
         }
-
     }
     return output;
 }
@@ -303,14 +296,12 @@ AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
   */
 AppinfoJsonFile.prototype.localize = function(translations, locales) {
     // don't localize if there is no text
-    console.log("AppinfoJsonFile localize()");
-   for (var i=0; i < locales.length; i++) {
+    for (var i=0; i < locales.length; i++) {
        if (!this.project.isSourceLocale(locales[i])) {
             var pathName = this.getLocalizedPath(locales[i]);
             var translatedOutput = this.localizeText(translations, locales[i]);
             this.API.utils.makeDirs(pathName);
             fs.writeFileSync(pathName + "/appinfo.json", JSON.stringify(translatedOutput, true, 4), "utf-8");
-            console.log("###########################")
        }
     }
 };
