@@ -25,9 +25,10 @@ if (!AppinfoJsonFile) {
 
 var p = new CustomProject({
     id: "app",
-    sourceLocale: "en-US"
+    sourceLocale: "en-US",
+    schema: "./test/testfiles/appinfo.schema.json"
     }, "./test/testfiles", {
-    locales:["en-GB"]
+    locales:["en-GB", "ko-KR"]
 });
 
 var sampleAppinfo = {
@@ -90,7 +91,7 @@ module.exports.appinfojsonfile = {
             type: jsft
         });
         test.ok(j);
-        test.equal(j.makeKey("This is a test"), "This is a test");
+        test.equal(j.makeKey("title"), "title");
         test.done();
     },
     testAppinfoJsonFileParseSimpleGetByKey: function(test) {
@@ -102,23 +103,23 @@ module.exports.appinfojsonfile = {
             type: jsft
         });
         test.ok(j);
-        j.parse('rb.getString("This is a test")');
+        j.parse(sampleAppinfo);
 
         var set = j.getTranslationSet();
         test.ok(set);
 
         var r = set.getBy({
-            reskey: "This is a test"
+            reskey: "Settings"
         });
         test.ok(r);
 
-        test.equal(r[0].getSource(), "This is a test");
-        test.equal(r[0].getKey(), "This is a test");
+        test.equal(r[0].getSource(), "Settings");
+        test.equal(r[0].getKey(), "Settings");
 
         test.done();
     },
     testAppinfoJsonFileParseMultipleWithKey: function(test) {
-        test.expect(10);
+        test.expect(6);
 
         var j = new AppinfoJsonFile({
             project: p,
@@ -127,26 +128,18 @@ module.exports.appinfojsonfile = {
         });
         test.ok(j);
 
-        j.parse('RB.getString("This is a test", "x");\n\ta.parse("This is another test.");\n\t\tRB.getString("This is a test", "y");');
+        j.parse('{"title":"Settings"}');
 
         var set = j.getTranslationSet();
         test.ok(set);
 
         var r = set.getBy({
-            reskey: "x"
+            reskey: "Settings"
         });
         test.ok(r);
-        test.equal(r[0].getSource(), "This is a test");
-        test.ok(!r[0].getAutoKey());
-        test.equal(r[0].getKey(), "x");
-
-        r = set.getBy({
-            reskey: "y"
-        });
-        test.ok(r);
-        test.equal(r[0].getSource(), "This is a test");
-        test.ok(!r[0].getAutoKey());
-        test.equal(r[0].getKey(), "y");
+        test.equal(r[0].getSource(), "Settings");
+        test.ok(r[0].getAutoKey());
+        test.equal(r[0].getKey(), "Settings");
 
         test.done();
     },
@@ -155,7 +148,7 @@ module.exports.appinfojsonfile = {
 
         var j = new AppinfoJsonFile({
             project: p,
-            pathName: "./js/testAppinfo.json",
+            pathName: "./appinfo.json",
             type: jsft
         });
         test.ok(j);
@@ -163,19 +156,19 @@ module.exports.appinfojsonfile = {
         // should read the file
         j.extract();
         var set = j.getTranslationSet();
-        test.equal(set.size(), 4);
+        test.equal(set.size(), 2);
 
-        var r = set.getBySource("This is a test");
+        var r = set.getBySource("Settings");
         test.ok(r);
-        test.equal(r.getSource(), "This is a test");
-        test.equal(r.getKey(), "This is a test");
+        test.equal(r.getSource(), "Settings");
+        test.equal(r.getKey(), "Settings");
 
         var r = set.getBy({
-            reskey: "id1"
+            reskey: "Settings"
         });
         test.ok(r);
-        test.equal(r[0].getSource(), "This is a test with a unique id");
-        test.equal(r[0].getKey(), "id1");
+        test.equal(r[0].getSource(), "Settings");
+        test.equal(r[0].getKey(), "Settings");
 
         test.done();
     },
@@ -210,7 +203,7 @@ module.exports.appinfojsonfile = {
         j.extract();
 
         var set = j.getTranslationSet();
-        test.equal(set.size(), 10);
+        test.equal(set.size(), 0);
         test.done();
     }
 };

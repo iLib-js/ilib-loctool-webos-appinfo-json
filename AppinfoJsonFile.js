@@ -154,12 +154,17 @@ AppinfoJsonFile.prototype.loadSchema = function(source) {
  */
 AppinfoJsonFile.prototype.parse = function(data) {
     logger.debug("Extracting strings from " + this.pathName);
+
+    this.parsedData = data;
+
+    if (typeof data !== "object") {
+        this.parsedData = JSON.parse(data);
+    }
+
     if (!this.schema) {
         this.schema = this.loadSchema();
     }
-    this.parsedData = JSON.parse(data);
     this.resourceIndex = 0;
-
     for (var i =0; i < this.schema.length; i++) {
         if (this.parsedData[this.schema[i]]) {
             var r = this.API.newResource({
@@ -179,25 +184,8 @@ AppinfoJsonFile.prototype.parse = function(data) {
         }
         else {
             logger.warn("Warning: Bogus empty string in get string call: ");
-            //logger.warn("... " + data.substring(result.index, reGetString.lastIndex) + " ...");
         }
     }
-
-    // now check for and report on errors in the source
-    this.API.utils.generateWarnings(data, reGetStringBogusConcatenation1,
-        "Warning: string concatenation is not allowed in the RB.getString() parameters:",
-        logger,
-        this.pathName);
-
-    this.API.utils.generateWarnings(data, reGetStringBogusConcatenation2,
-        "Warning: string concatenation is not allowed in the RB.getString() parameters:",
-        logger,
-        this.pathName);
-
-    this.API.utils.generateWarnings(data, reGetStringBogusParam,
-        "Warning: non-string arguments are not allowed in the RB.getString() parameters:",
-        logger,
-        this.pathName);
 };
 
 /**
