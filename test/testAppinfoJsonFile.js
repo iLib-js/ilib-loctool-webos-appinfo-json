@@ -49,12 +49,12 @@ var sampleAppinfo2 = {
     "version": "4.0.1",
     "vendor": "Palm",
     "type": "web",
-    "main": ["index.html"],
-    "title": "Settings",
+    "main": "index.html",
+    "title": ["Settings"],
     "sysAssetsBasePath": "assets",
 }
 
-var jsft = new AppinfoJsonFileType(p);
+var ajft = new AppinfoJsonFileType(p);
 
 module.exports.appinfojsonfile = {
     testAppinfoJsonFileConstructor: function(test) {
@@ -69,7 +69,7 @@ module.exports.appinfojsonfile = {
 
         var j = new AppinfoJsonFile({
             project: p,
-            type: jsft
+            type: ajft
         });
 
         test.ok(j);
@@ -81,7 +81,7 @@ module.exports.appinfojsonfile = {
         var j = new AppinfoJsonFile({
             project: p,
             pathName: undefined,
-            type: jsft
+            type: ajft
         });
         test.ok(j);
         test.done();
@@ -92,7 +92,7 @@ module.exports.appinfojsonfile = {
         var j = new AppinfoJsonFile({
             project: p,
             pathName: undefined,
-            type: jsft
+            type: ajft
         });
         test.ok(j);
         test.equal(j.makeKey("title"), "title");
@@ -104,7 +104,7 @@ module.exports.appinfojsonfile = {
         var j = new AppinfoJsonFile({
             project: p,
             pathName: undefined,
-            type: jsft
+            type: ajft
         });
         test.ok(j);
         j.parse(sampleAppinfo);
@@ -122,13 +122,34 @@ module.exports.appinfojsonfile = {
 
         test.done();
     },
+    testAppinfoJsonFileParseSimpleGetByKey2: function(test) {
+        test.expect(3);
+
+        var j = new AppinfoJsonFile({
+            project: p,
+            pathName: undefined,
+            type: ajft
+        });
+        test.ok(j);
+        j.parse(sampleAppinfo2);
+
+        var set = j.getTranslationSet();
+        test.ok(set);
+
+        j.extract();
+
+        var set = j.getTranslationSet();
+        test.equal(set.size(), 1);
+        test.done();
+
+    },
     testAppinfoJsonFileParseMultipleWithKey: function(test) {
         test.expect(6);
 
         var j = new AppinfoJsonFile({
             project: p,
             pathName: undefined,
-            type: jsft
+            type: ajft
         });
         test.ok(j);
 
@@ -152,8 +173,8 @@ module.exports.appinfojsonfile = {
 
         var j = new AppinfoJsonFile({
             project: p,
-            pathName: ".",
-            type: jsft
+            pathName: "./appinfo.json",
+            type: ajft
         });
         test.ok(j);
 
@@ -182,7 +203,7 @@ module.exports.appinfojsonfile = {
         var j = new AppinfoJsonFile({
             project: p,
             pathName: undefined,
-            type: jsft
+            type: ajft
         });
         test.ok(j);
 
@@ -199,7 +220,7 @@ module.exports.appinfojsonfile = {
         var j = new AppinfoJsonFile({
             project: p,
             pathName: "./js/t2.js",
-            type: jsft
+            type: ajft
         });
         test.ok(j);
 
@@ -432,7 +453,36 @@ module.exports.appinfojsonfile = {
             jsrf = new AppinfoJsonFile({
                 project: p,
                 pathName: undefined,
-                type: jsft,
+                type: ajft,
+                locale: locales[i]
+            });
+            test.equal(jsrf.getLocalizedPath(locales[i]), expected[i]);
+        }
+        test.done();
+    },
+    testJSONResourceFileGetResourceFilePathsSimple: function(test) {
+        test.expect(10);
+        var locales = ["af-ZA","am-ET","ar-AE","ar-BH","ar-DJ","ar-DZ","ar-EG","ar-IQ",
+        "ar-JO","ar-KW"];
+
+        var expected = [
+            "localized_json/af",
+            "localized_json/am",
+            "localized_json/ar/AE",
+            "localized_json/ar/BH",
+            "localized_json/ar/DJ",
+            "localized_json/ar/DZ",
+            "localized_json/ar",
+            "localized_json/ar/IQ",
+            "localized_json/ar/JO",
+            "localized_json/ar/KW",
+        ];
+
+        for (var i=0; i<locales.length;i++) {
+            jsrf = new AppinfoJsonFile({
+                project: p,
+                pathName: undefined,
+                type: ajft,
                 locale: locales[i]
             });
             test.equal(jsrf.getLocalizedPath(locales[i]), expected[i]);

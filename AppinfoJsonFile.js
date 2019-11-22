@@ -122,7 +122,7 @@ AppinfoJsonFile.prototype.makeKey = function(source) {
 };
 
 AppinfoJsonFile.prototype.loadSchema = function(source) {
-    var localizeKeys = [], schemaFilePath;
+    var localizeProperties = {}, schemaFilePath;
     if (this.project.schema) {
         schemaFilePath = path.join(process.env.PWD, this.project.schema);
     } else {
@@ -140,10 +140,10 @@ AppinfoJsonFile.prototype.loadSchema = function(source) {
 
     for (var key in schemaData.properties) {
         if (schemaData.properties[key].localizable == true) {
-            localizeKeys.push(key);
+            localizeProperties[key] = schemaData.properties[key];
         }
     }
-    return localizeKeys;
+    return localizeProperties;
 };
 
 /**
@@ -164,14 +164,15 @@ AppinfoJsonFile.prototype.parse = function(data) {
         this.schema = this.loadSchema();
     }
     this.resourceIndex = 0;
-    for (var i =0; i < this.schema.length; i++) {
-        if (this.parsedData[this.schema[i]]) {
+    for (var property in this.schema) {
+        if ((this.parsedData[property]) &&
+            (this.schema[property].type === typeof this.parsedData[property])) {
             var r = this.API.newResource({
                 resType: "string",
                 project: this.project.getProjectId(),
-                key: AppinfoJsonFile.unescapeString(this.parsedData[this.schema[i]]),
+                key: AppinfoJsonFile.unescapeString(this.parsedData[property]),
                 sourceLocale: this.project.sourceLocale,
-                source: AppinfoJsonFile.cleanString(this.parsedData[this.schema[i]]),
+                source: AppinfoJsonFile.cleanString(this.parsedData[property]),
                 autoKey: true,
                 pathName: this.pathName,
                 state: "new",
@@ -180,9 +181,8 @@ AppinfoJsonFile.prototype.parse = function(data) {
                 index: this.resourceIndex++
             });
             this.set.add(r);
-        }
-        else {
-            logger.warn("Warning: Bogus empty string in get string call: ");
+        } else {
+            logger.warn("This property doesn't have localized `true` or not match the required data type:  ", property);
         }
     }
 };
@@ -234,7 +234,7 @@ AppinfoJsonFile.prototype.getLocalizedPath = function(locale) {
         fullPath = "/" + splitLocale[0];
     } else {
         for (var i=0; i < splitLocale.length; i++) {
-            fullPath = "/"+ splitLocale[i];
+            fullPath = fullPath + "/"+ splitLocale[i];
         }
     }
     return rootPath + fullPath;
