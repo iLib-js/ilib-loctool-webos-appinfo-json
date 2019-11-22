@@ -234,7 +234,7 @@ AppinfoJsonFile.prototype.getLocalizedPath = function(locale) {
         fullPath = "/" + splitLocale[0];
     } else {
         for (var i=0; i < splitLocale.length; i++) {
-            fullPath = fullPath + "/"+ splitLocale[i];
+            fullPath += "/"+ splitLocale[i];
         }
     }
     return rootPath + fullPath;
@@ -251,7 +251,7 @@ AppinfoJsonFile.prototype.getLocalizedPath = function(locale) {
 AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
     var output = {};
     for (var property in this.parsedData) {
-        if (this.schema.includes(property)){
+        if (this.schema[property]){
             var text = this.parsedData[property];
             var key = this.makeKey(this.API.utils.escapeInvalidChars(text));
             var tester = this.API.newResource({
