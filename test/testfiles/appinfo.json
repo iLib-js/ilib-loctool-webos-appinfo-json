@@ -1,0 +1,25 @@
+{
+	"id": "com.palm.app.settings",
+	"version": "4.0.1",
+	"vendor": "Palm",
+	"type": "web",
+	"main": "index.html",
+	"title": "Settings",
+	"sysAssetsBasePath": "assets",
+	"icon": "icon.png",
+	"uiRevision": 2,
+	"transparent": true,
+	"defaultWindowType": "overlay",
+	"visible": false,
+	"lockable": false,
+	"noSplashOnLaunch": true,
+	"disableBackHistoryAPI": true,
+	"supportQuickStart": false,
+	"trustLevel": "trusted",
+	"accessibility": {
+		"supportsAudioGuidance": true
+	},
+	"voiceControl": "manual",
+	"usePrerendering": true,
+	"v8SnapshotFile": "snapshot_blob.bin"
+}

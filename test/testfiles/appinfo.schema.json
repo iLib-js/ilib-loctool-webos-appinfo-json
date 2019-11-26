@@ -1,0 +1,131 @@
+{
+    "id": "ApplicationDescription",
+    "type": "object",
+    "properties": {
+        "title": {
+            "type": "string",
+            "description": "The title of the application as it shows in the Launcher and the app window. The application title is unique, set once.",
+            "localizable": true
+        },
+        "title@oled": {
+            "type": "string",
+            "description": "The title of the oled application as it shows in the Launcher and the app window. The application title is unique, set once.",
+            "localizable": true
+        },
+        "icon": {
+            "type": "string",
+            "description": "Image displayed for your app. This is a file path relative to the appinfo.json file. The default is \"icon.png\"."
+        },
+        "largeIcon": {
+            "type": "string",
+            "description": "Large app icon,This is a file path relative to the appinfo.json file. e.g, largeIcon-130x130.png."
+        },
+        "mediumIcon": {
+            "type": "string",
+            "description": "Medium app icon,This is a file path relative to the appinfo.json file. e.g, mediumIcon-96x96.png."
+        },
+        "splashicon": {
+            "type": "string",
+            "description": "splashicon is shown in loading screen, e.g., icon-256x256.png"
+        },
+        "splashBackground": {
+            "type": "string",
+            "description": "splashBackground is shown in loading screen, e.g, splash-background.png"
+        },
+        "miniicon": {
+            "type": "string",
+            "description": "Used for notifications. This is a file path relative to the appinfo.json file."
+        },
+        "vendor": {
+            "type": "string",
+            "description": "App owner. This is used in the launcher and deviceinfo dialogs, e.g., LGE",
+            "localizable": true
+        },
+        "vendorurl": {
+            "type": "string",
+            "description": "URL that turns the vendor portion in deviceinfo dialogs to hyperlinks.",
+            "localizable": true
+        },
+        "bgImage": {
+            "type": "string",
+            "description": "This field is the location of a bitmap. The bitmap is displayed to the user when the user hovers over the launchpoint with the system pointer."
+        },
+        "bgColor": {
+            "type": "string",
+            "description": "This field is the color to be displayed to the user when the user hovers over the launchpoint with the system pointer. This is used in the absence of the backgroundImage."
+        },
+        "deeplinkingParams": {
+            "type": "string",
+            "description": "This field describes parameter pattern for deep linking. Pattern must have \"$CONTENTID\" keyword which will be replaced with real content ID given by cloud."
+        },
+        "imageForRecents": {
+            "type": "string",
+            "description": "This field is the location of a bitmap. The bitmap is displayed in the recent apps list."
+        },
+        "iconColor": {
+            "type": "string",
+            "description": "indicates color of the icon of the launchpoint."
+        },
+        "appDescription": {
+            "type": "string",
+            "description": "A short tagline for the application"
+        },
+        "appDescriptionLong": {
+            "type": "string",
+            "description": "A long description for MVPD application. It can exceed 60 characters."
+        },
+        "copyright": {
+            "type": "string",
+            "description": "copyright.",
+            "localizable": true
+        },
+        "label": {
+            "type": "string",
+            "description": "label.",
+            "localizable": true
+        },
+        "url": {
+            "type": "string",
+            "description": "url.",
+            "localizable": true
+        },
+        "address": {
+            "type": "string",
+            "description": "address.",
+            "localizable": true
+        },
+        "subject": {
+            "type": "string",
+            "description": "subject.",
+            "localizable": true
+        },
+        "phone": {
+            "type": "string",
+            "description": "phone.",
+            "localizable": true
+        },
+        "displayName": {
+            "type": "string",
+            "description": "displayName.",
+            "localizable": true
+        },
+        "appmenu": {
+            "type": "string",
+            "description": "appmenu.",
+            "localizable": true
+        },
+        "additionalLaunchPoints": {
+            "type": "string",
+            "description": "additionalLaunchPoints.",
+            "localizable": true
+        },
+        "keywords": {
+            "type": "array",
+            "description": "keywords list.",
+		    "items":{
+                "type": "string",
+                "localizable": true
+            }
+        }
+    }
+}
