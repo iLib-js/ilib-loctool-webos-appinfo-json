@@ -59,12 +59,16 @@ AppinfoJsonFileType.prototype.handles = function(pathName) {
     logger.debug("AppinfoJsonFileTyp handles " + pathName + "?");
     if (!pathName) return false;
     
-    return (pathName === "appinfo.json") ? true : false
+    return (path.basename(pathName) === "appinfo.json") ? true : false
 };
 
 AppinfoJsonFileType.prototype.name = function() {
     return "Appinfo Json File Type";
 };
+
+AppinfoJsonFileType.prototype.getResourceTypes = function() {
+    return {};
+}
 
 /**
  * Write out the aggregated resources for this file type. In
@@ -90,25 +94,6 @@ AppinfoJsonFileType.prototype.newFile = function(path) {
 AppinfoJsonFileType.prototype.getDataType = function() {
     return this.datatype;
 };
-
-AppinfoJsonFileType.prototype.getResourceTypes = function() {
-    return {};
-};
-
-/**
- * Return the name of the node module that implements the resource file type, or
- * the path to a javascript file that implements the resource filetype.
- * @returns {Function|undefined} node module name or path, or undefined if this file type does not
- * need resource files
- */
-AppinfoJsonFileType.prototype.getResourceFileType = function() {
-    return AppinfoJsonFileType;
-};
-
-
-AppinfoJsonFileType.prototype.getResourceFile = function(locale) {
-    return {};
-}
 
 /**
  * Return the translation set containing all of the extracted

@@ -1,5 +1,5 @@
 /*
- * testAppinfoJsonFileType.js - test the appinfo.json template file type handler object.
+ * testAppinfoJsonFile.js - test the appinfo.json file type handler object.
  *
  * Copyright © 2019, JEDLSoft
  *
@@ -21,16 +21,18 @@ if (!AppinfoJsonFile) {
     var AppinfoJsonFile = require("../AppinfoJsonFile.js");
     var AppinfoJsonFileType = require("../AppinfoJsonFileType.js");
     var CustomProject =  require("loctool/lib/CustomProject.js");
+    var TranslationSet =  require("loctool/lib/TranslationSet.js");
+    var ResourceString =  require("loctool/lib/ResourceString.js");
 }
 
 var p = new CustomProject({
     id: "app",
+    type: "webos-web",
     sourceLocale: "en-US",
     schema: "./test/testfiles/appinfo.schema.json",
     resourceDirs: {
         "json": "localized_json"
-    }
-
+    },
     }, "./test/testfiles", {
     locales:["en-GB", "ko-KR"]
 });
@@ -60,56 +62,56 @@ module.exports.appinfojsonfile = {
     testAppinfoJsonFileConstructor: function(test) {
         test.expect(1);
 
-        var j = new AppinfoJsonFile({project: p});
-        test.ok(j);
+        var ajf = new AppinfoJsonFile({project: p});
+        test.ok(ajf);
         test.done();
     },
     testAppinfoJsonFileConstructorParams: function(test) {
         test.expect(1);
 
-        var j = new AppinfoJsonFile({
+        var ajf = new AppinfoJsonFile({
             project: p,
             type: ajft
         });
 
-        test.ok(j);
+        test.ok(ajf);
         test.done();
     },
     testAppinfoJsonFileConstructorNoFile: function(test) {
         test.expect(1);
 
-        var j = new AppinfoJsonFile({
+        var ajf = new AppinfoJsonFile({
             project: p,
             pathName: undefined,
             type: ajft
         });
-        test.ok(j);
+        test.ok(ajf);
         test.done();
     },
     testAppinfoJsonFileMakeKey: function(test) {
         test.expect(2);
 
-        var j = new AppinfoJsonFile({
+        var ajf = new AppinfoJsonFile({
             project: p,
             pathName: undefined,
             type: ajft
         });
-        test.ok(j);
-        test.equal(j.makeKey("title"), "title");
+        test.ok(ajf);
+        test.equal(ajf.makeKey("title"), "title");
         test.done();
     },
     testAppinfoJsonFileParseSimpleGetByKey: function(test) {
         test.expect(5);
 
-        var j = new AppinfoJsonFile({
+        var ajf = new AppinfoJsonFile({
             project: p,
             pathName: undefined,
             type: ajft
         });
-        test.ok(j);
-        j.parse(sampleAppinfo);
+        test.ok(ajf);
+        ajf.parse(sampleAppinfo);
 
-        var set = j.getTranslationSet();
+        var set = ajf.getTranslationSet();
         test.ok(set);
 
         var r = set.getBy({
@@ -125,20 +127,20 @@ module.exports.appinfojsonfile = {
     testAppinfoJsonFileParseSimpleGetByKey2: function(test) {
         test.expect(3);
 
-        var j = new AppinfoJsonFile({
+        var ajf = new AppinfoJsonFile({
             project: p,
             pathName: undefined,
             type: ajft
         });
-        test.ok(j);
-        j.parse(sampleAppinfo2);
+        test.ok(ajf);
+        ajf.parse(sampleAppinfo2);
 
-        var set = j.getTranslationSet();
+        var set = ajf.getTranslationSet();
         test.ok(set);
 
-        j.extract();
+        ajf.extract();
 
-        var set = j.getTranslationSet();
+        var set = ajf.getTranslationSet();
         test.equal(set.size(), 1);
         test.done();
 
@@ -146,16 +148,16 @@ module.exports.appinfojsonfile = {
     testAppinfoJsonFileParseMultipleWithKey: function(test) {
         test.expect(6);
 
-        var j = new AppinfoJsonFile({
+        var ajf = new AppinfoJsonFile({
             project: p,
             pathName: undefined,
             type: ajft
         });
-        test.ok(j);
+        test.ok(ajf);
 
-        j.parse('{"title":"Settings"}');
+        ajf.parse('{"title":"Settings"}');
 
-        var set = j.getTranslationSet();
+        var set = ajf.getTranslationSet();
         test.ok(set);
 
         var r = set.getBy({
@@ -171,16 +173,16 @@ module.exports.appinfojsonfile = {
     testAppinfoJsonFileExtractFile: function(test) {
         test.expect(8);
 
-        var j = new AppinfoJsonFile({
+        var ajf = new AppinfoJsonFile({
             project: p,
             pathName: "./appinfo.json",
             type: ajft
         });
-        test.ok(j);
+        test.ok(ajf);
 
         // should read the file
-        j.extract();
-        var set = j.getTranslationSet();
+        ajf.extract();
+        var set = ajf.getTranslationSet();
         test.equal(set.size(), 2);
 
         var r = set.getBySource("Settings");
@@ -197,38 +199,189 @@ module.exports.appinfojsonfile = {
 
         test.done();
     },
+        testAppinfoJsonFiledefaultPath: function(test) {
+        test.expect(2);
+
+        var ajf = new AppinfoJsonFile({
+            project: p,
+            pathName: ".",
+            type: ajft
+        });
+        test.ok(ajf);
+
+        // should attempt to read the file and not fail
+        ajf.extract();
+
+        var set = ajf.getTranslationSet();
+        test.equal(set.size(), 0);
+
+        test.done();
+    },
     testAppinfoJsonFileExtractUndefinedFile: function(test) {
         test.expect(2);
 
-        var j = new AppinfoJsonFile({
+        var ajf = new AppinfoJsonFile({
             project: p,
             pathName: undefined,
             type: ajft
         });
-        test.ok(j);
+        test.ok(ajf);
 
         // should attempt to read the file and not fail
-        j.extract();
+        ajf.extract();
 
-        var set = j.getTranslationSet();
+        var set = ajf.getTranslationSet();
         test.equal(set.size(), 0);
         test.done();
     },
     testAppinfoJsonFileTest2: function(test) {
         test.expect(2);
 
-        var j = new AppinfoJsonFile({
+        var ajf = new AppinfoJsonFile({
             project: p,
             pathName: "./js/t2.js",
             type: ajft
         });
-        test.ok(j);
+        test.ok(ajf);
 
         // should attempt to read the file and not fail
-        j.extract();
+        ajf.extract();
 
-        var set = j.getTranslationSet();
+        var set = ajf.getTranslationSet();
         test.equal(set.size(), 0);
+        test.done();
+    },
+    testAppinfoJsonParse: function (test) {
+        test.expect(5);
+        var ajf = new AppinfoJsonFile({
+            project: p,
+            type: ajft
+        });
+        test.ok(ajf);
+        ajf.parse({
+            "id": "app",
+            "title": "Settings",
+            "version": "4.0.1",
+            "type": "webos-web",
+            "usePrerendering": true,
+            "v8SnapshotFile": "snapshot_b"
+        });
+        var set = ajf.getTranslationSet();
+        test.ok(set);
+
+        var r = set.getBySource("Settings");
+        test.ok(r);
+        test.equal(r.getSource(), "Settings");
+        test.equal(r.getKey(), "Settings");
+
+        test.done();
+    },
+    testAppinfoJsonParseMultiple: function (test) {
+        test.expect(6);
+        var ajf = new AppinfoJsonFile({
+            project: p,
+            type: ajft
+        });
+        test.ok(ajf);
+        ajf.parse({
+            "id": "app",
+            "title": "Settings",
+            "title@oled": "Settings@oled",
+            "subject": "web app",
+            "displayName": "Settings",
+            "version": "4.0.1",
+            "appmenu": "webos app",
+            "usePrerendering": true,
+            "v8SnapshotFile": "snapshot_b"
+        });
+        var set = ajf.getTranslationSet();
+        test.ok(set);
+        test.equal(set.size(), 4);
+
+        var r = set.getBySource("Settings@oled");
+        test.ok(r);
+        test.equal(r.getSource(), "Settings@oled");
+        test.equal(r.getKey(), "Settings@oled");
+        test.done();
+
+    },
+    testAppinfoJsonLocalzeText: function(test) {
+        test.expect(2);
+        var ajf = new AppinfoJsonFile({
+            project: p,
+            type: ajft
+        });
+        test.ok(ajf);
+        ajf.parse({
+            "id": "app",
+            "title": "Photo &amp; Video",
+            "version": "4.0.1",
+            "type": "webos-web",
+            "usePrerendering": true,
+            "v8SnapshotFile": "snapshot_b"
+        });
+        var translations = new TranslationSet();
+        var resource = new ResourceString({
+            project: "app",
+            source: "Photo &amp; Video",
+            sourceLocale: "en-US",
+            key: "Photo &amp; Video",
+            target: "사진 &amp; 동영상",
+            targetLocale: "ko-KR",
+            datatype: "javascript"
+        })
+        translations.add(resource);
+
+        var actual = ajf.localizeText(translations, "ko-KR");
+        var expected = '{\n    "title": "사진 &amp; 동영상"\n}';
+        test.equal(actual, expected);
+        test.done();
+    },
+    testAppinfoJsonLocalzeTextMultiple: function(test) {
+        test.expect(2);
+        var ajf = new AppinfoJsonFile({
+            project: p,
+            type: ajft
+        });
+        test.ok(ajf);
+        ajf.parse({
+            "id": "app",
+            "title": "Photo &amp; Video",
+            "title@oled": "Photo &amp; Video@oled",
+            "version": "4.0.1",
+            "type": "webos-web",
+            "displayName": "PhoeoVideo",
+            "usePrerendering": true,
+            "v8SnapshotFile": "snapshot_b"
+        });
+        var translations = new TranslationSet();
+
+        translations.add(new ResourceString({
+            project: "app",
+            source: "Photo &amp; Video",
+            sourceLocale: "en-US",
+            key: "Photo &amp; Video",
+            target: "사진 &amp; 동영상",
+            targetLocale: "ko-KR",
+            datatype: "javascript"
+        }));
+
+        translations.add(new ResourceString({
+            project: "app",
+            source: "Photo &amp; Video@oled",
+            sourceLocale: "en-US",
+            key: "Photo &amp; Video@oled",
+            target: "사진 &amp; 동영상",
+            targetLocale: "ko-KR",
+            datatype: "javascript"
+        }));
+
+        var actual = ajf.localizeText(translations, "ko-KR");
+        var expected =
+        '{\n    "title": "사진 &amp; 동영상",\n'+
+        '    "title@oled": "사진 &amp; 동영상"\n'+
+        '}'
+        test.equal(actual, expected);
         test.done();
     },
     testJSONResourceFileGetResourceFilePaths: function(test) {

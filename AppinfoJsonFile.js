@@ -250,6 +250,7 @@ AppinfoJsonFile.prototype.getLocalizedPath = function(locale) {
  */
 AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
     var output = {};
+    var stringifyOuput ="";
     for (var property in this.parsedData) {
         if (this.schema[property]){
             var text = this.parsedData[property];
@@ -271,6 +272,7 @@ AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
                 var r = this.API.newResource({
                     resType: "string",
                     project: this.project.getProjectId(),
+                    key: this.makeKey(this.API.utils.escapeInvalidChars(text)),
                     sourceLocale: this.project.getSourceLocale(),
                     source: this.API.utils.escapeInvalidChars(text),
                     targetLocale: locale,
@@ -283,7 +285,12 @@ AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
             }
         }
     }
-    return output;
+
+    if (output) {
+        stringifyOuput = JSON.stringify(output, true, 4);
+    }
+
+    return stringifyOuput;
 }
 
 /**
@@ -301,7 +308,7 @@ AppinfoJsonFile.prototype.localize = function(translations, locales) {
             var pathName = this.getLocalizedPath(locales[i]);
             var translatedOutput = this.localizeText(translations, locales[i]);
             this.API.utils.makeDirs(pathName);
-            fs.writeFileSync(pathName + "/appinfo.json", JSON.stringify(translatedOutput, true, 4), "utf-8");
+            fs.writeFileSync(pathName + "/appinfo.json", translatedOutput, "utf-8");
        }
     }
 };

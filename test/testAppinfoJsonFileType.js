@@ -33,23 +33,36 @@ var p = new CustomProject({
 module.exports.appinfojsonfiletype = {
     testAppinfoJsonFileTypeConstructor: function(test) {
         test.expect(1);
-        var htf = new AppinfoJsonFileType(p);
-        test.ok(htf);
+        var ajft = new AppinfoJsonFileType(p);
+        test.ok(ajft);
         test.done();
     },
-
-    testAppinfoJsonFileTypeHandlesJSTrue: function(test) {
+    testAppinfoJsonFileTypeHandlesJsonTrue: function(test) {
         test.expect(2);
-        var htf = new AppinfoJsonFileType(p);
-        test.ok(htf);
-        test.ok(htf.handles("appinfo.json"));
+        var ajft = new AppinfoJsonFileType(p);
+        test.ok(ajft);
+        test.ok(ajft.handles("appinfo.json"));
         test.done();
     },
-    testAppinfoJsonFileTypeHandlesJSFalseClose: function(test) {
+    testAppinfoJsonFileTypeHandlesJsonPath: function(test) {
         test.expect(2);
-        var htf = new AppinfoJsonFileType(p);
-        test.ok(htf);
-        test.ok(!htf.handles("foo.js"));
+        var ajft = new AppinfoJsonFileType(p);
+        test.ok(ajft);
+        test.ok(ajft.handles("foo/bar/appinfo.json"));
+        test.done();
+    },
+    testAppinfoJsonFileTypeHandlesJonFalse: function(test) {
+        test.expect(2);
+        var ajft = new AppinfoJsonFileType(p);
+        test.ok(ajft);
+        test.ok(!ajft.handles("foo.js"));
+        test.done();
+    },
+    testAppinfoJsonFileTypeHandlesJonFalse1: function(test) {
+        test.expect(2);
+        var ajft = new AppinfoJsonFileType(p);
+        test.ok(ajft);
+        test.ok(!ajft.handles("lappinfo.json"));
         test.done();
     }
 };
