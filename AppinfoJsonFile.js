@@ -313,4 +313,11 @@ AppinfoJsonFile.prototype.localize = function(translations, locales) {
     }
 };
 
+/**
+  * Write the manifest file to dist.
+  */
+AppinfoJsonFile.prototype.writeManifest = function(filePath, manifestInfo) {
+    console.log("#### AppinfoJsonFile: writeManifest");
+}
+
 module.exports = AppinfoJsonFile;
