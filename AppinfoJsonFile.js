@@ -318,6 +318,31 @@ AppinfoJsonFile.prototype.localize = function(translations, locales) {
   */
 AppinfoJsonFile.prototype.writeManifest = function(filePath, manifestInfo) {
     console.log("#### AppinfoJsonFile: writeManifest");
+    var manifest = {
+        files: []
+    };
+
+    function walk(root, dir) {
+        var list = fs.readdirSync(path.join(root, dir));
+        list.forEach(function (file) {
+            var sourcePathRelative = path.join(dir, file);
+            var sourcePath = path.join(root, sourcePathRelative);
+            var stat = fs.statSync(sourcePath);
+            if (stat && stat.isDirectory()) {
+                walk(root, sourcePathRelative);
+            } else {
+                if (file.match(/\.json$/) && (file !== "ilibmanifest.json")) {
+                    manifest.files.push(sourcePathRelative);
+                }
+            }
+        });
+    }
+
+    walk(filePath, "");
+    for (var i=0; i < manifest.files.length; i++) {
+        console.log("list: ", manifest.files[i]);
+    }
+
 }
 
 module.exports = AppinfoJsonFile;
