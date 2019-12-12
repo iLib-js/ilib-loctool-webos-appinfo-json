@@ -158,21 +158,11 @@ AppinfoJsonFileType.prototype.getExtensions = function() {
   */
 AppinfoJsonFileType.prototype.projectClose = function() {
     var resourceRoot = this.project.getResourceDirs("json")[0] || "resources";
-    var resourcePathList = [], localizePath;
-    var targetLocales = this.project.locales;
-
-    for (var i=0; i < targetLocales.length; i++) {
-        var manifestFile = new AppinfoJsonFile({
+    var manifestFile = new AppinfoJsonFile({
             project: this.project,
-            type: this.type,
-            locale: targetLocales[i]
-        })
-        console.log("manifestFile Path: ", manifestFile.getLocalizedPath(targetLocales[i]));
-        localizePath = manifestFile.getLocalizedPath(targetLocales[i]).replace(resourceRoot + "/","");
-        resourcePathList.push(localizePath + "/appinfo.json");
-    }
-
-    manifestFile.writeManifest(resourceRoot, resourcePathList);
+            type: this.type
+        });
+    manifestFile.writeManifest(resourceRoot);
 };
 
 module.exports = AppinfoJsonFileType;

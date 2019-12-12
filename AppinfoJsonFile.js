@@ -316,7 +316,7 @@ AppinfoJsonFile.prototype.localize = function(translations, locales) {
 /**
   * Write the manifest file to dist.
   */
-AppinfoJsonFile.prototype.writeManifest = function(filePath, manifestInfo) {
+AppinfoJsonFile.prototype.writeManifest = function(filePath) {
     console.log("#### AppinfoJsonFile: writeManifest");
     var manifest = {
         files: []
@@ -342,7 +342,8 @@ AppinfoJsonFile.prototype.writeManifest = function(filePath, manifestInfo) {
     for (var i=0; i < manifest.files.length; i++) {
         console.log("list: ", manifest.files[i]);
     }
-
+    var manifestFilePath = path.join(filePath, "ilibmanifest.json");
+    fs.writeFileSync(manifestFilePath, JSON.stringify(manifest), 'utf8');
 }
 
 module.exports = AppinfoJsonFile;
