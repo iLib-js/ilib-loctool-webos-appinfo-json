@@ -321,6 +321,8 @@ AppinfoJsonFile.prototype.writeManifest = function(filePath) {
         files: []
     };
 
+    if (!fs.existsSync(filePath)) return;
+
     function walk(root, dir) {
         var list = fs.readdirSync(path.join(root, dir));
         list.forEach(function (file) {
