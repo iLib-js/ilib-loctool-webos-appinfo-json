@@ -30,7 +30,8 @@
         "README.md",
         "LICENSE",
         "AppinfoJsonFileType.js",
-        "AppinfoJsonFile.js"
+        "AppinfoJsonFile.js",
+        "schema"
     ],
     "repository": {
         "type": "git",

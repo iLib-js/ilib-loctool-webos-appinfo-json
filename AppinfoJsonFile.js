@@ -1,7 +1,7 @@
 /*
  * AppinfoFile.js - plugin to extract resources from a appinfo.json code file
  *
- * Copyright © 2019, JEDLSoft
+ * Copyright © 2019-2020, JEDLSoft
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ var log4js = require("log4js");
 var logger = log4js.getLogger("loctool.plugin.AppinfoJsonFile");
 
 /**
- * Create a new java file with the given path name and within
+ * Create a new appinfo.json file with the given path name and within
  * the given project.
  *
  * @param {Project} project the project object
@@ -107,9 +107,9 @@ AppinfoJsonFile.cleanString = function(string) {
 
 /**
  * Make a new key for the given string. This must correspond
- * exactly with the code in htglob jar file so that the
+ * exactly with the code in file so that the
  * resources match up. See the class IResourceBundle in
- * this project under the java directory for the corresponding
+ * this project under the directory for the corresponding
  * code.
  *
  * @private
@@ -188,7 +188,7 @@ AppinfoJsonFile.prototype.parse = function(data) {
 };
 
 /**
- * Extract all the localizable strings from the java file and add them to the
+ * Extract all the localizable strings from the appinfo.json file and add them to the
  * project's translation set.
  */
 AppinfoJsonFile.prototype.extract = function() {
@@ -207,10 +207,10 @@ AppinfoJsonFile.prototype.extract = function() {
 };
 
 /**
- * Return the set of resources found in the current JavaScript file.
+ * Return the set of resources found in the current appinfo.json file.
  *
  * @returns {TranslationSet} The set of resources found in the
- * current JavaScript file.
+ * current appinfo.json file.
  */
 AppinfoJsonFile.prototype.getTranslationSet = function() {
     return this.set;
@@ -294,8 +294,8 @@ AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
 }
 
 /**
-  * Localize the contents of this HTML file and write out the
-  * localized HTML file to a different file path.
+  * Localize the contents of this appinfo.json file and write out the
+  * localized appinfo.json file to a different file path.
   *
   * @param {TranslationSet} translations the current set of
   * translations
@@ -348,3 +348,4 @@ AppinfoJsonFile.prototype.writeManifest = function(filePath) {
 }
 
 module.exports = AppinfoJsonFile;
+
