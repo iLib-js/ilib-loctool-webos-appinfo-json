@@ -1,7 +1,7 @@
 /*
  * AppinfoFileType.js - Represents a collection of appinfo.json files
  *
- * Copyright © 2019, JEDLSoft
+ * Copyright © 2019-2020, JEDLSoft
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,11 +48,11 @@ var AppinfoJsonFileType = function(project) {
 };
 
 /**
- * Return true if the given path is a java file and is handled
+ * Return true if the given path is a appinfo.json file and is handled
  * by the current file type.
  *
  * @param {String} pathName path to the file being questions
- * @returns {boolean} true if the path is a java file, or false
+ * @returns {boolean} true if the path is a appinfo.json file, or false
  * otherwise
  */
 AppinfoJsonFileType.prototype.handles = function(pathName) {
