@@ -150,4 +150,19 @@ AppinfoJsonFileType.prototype.getExtensions = function() {
     return this.extensions;
 };
 
+/**
+  * Called right before each project is closed
+  * Allows the file type class to do any last-minute clean-up or generate any final files
+  *
+  * Generate manifest file based on created resource files
+  */
+AppinfoJsonFileType.prototype.projectClose = function() {
+    var resourceRoot = this.project.getResourceDirs("json")[0] || "resources";
+    var manifestFile = new AppinfoJsonFile({
+            project: this.project,
+            type: this.type
+        });
+    manifestFile.writeManifest(resourceRoot);
+};
+
 module.exports = AppinfoJsonFileType;

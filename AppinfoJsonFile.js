@@ -313,4 +313,39 @@ AppinfoJsonFile.prototype.localize = function(translations, locales) {
     }
 };
 
+/**
+  * Write the manifest file to dist.
+  */
+AppinfoJsonFile.prototype.writeManifest = function(filePath) {
+    var manifest = {
+        files: []
+    };
+
+    if (!fs.existsSync(filePath)) return;
+
+    function walk(root, dir) {
+        var list = fs.readdirSync(path.join(root, dir));
+        list.forEach(function (file) {
+            var sourcePathRelative = path.join(dir, file);
+            var sourcePath = path.join(root, sourcePathRelative);
+            var stat = fs.statSync(sourcePath);
+            if (stat && stat.isDirectory()) {
+                walk(root, sourcePathRelative);
+            } else {
+                if (file.match(/\.json$/) && (file !== "ilibmanifest.json")) {
+                    manifest.files.push(sourcePathRelative);
+                }
+            }
+        });
+    }
+
+    walk(filePath, "");
+    for (var i=0; i < manifest.files.length; i++) {
+        logger.info("Generated resource list " + manifest.files[i]);
+    }
+    var manifestFilePath = path.join(filePath, "ilibmanifest.json");
+    fs.writeFileSync(manifestFilePath, JSON.stringify(manifest), 'utf8');
+}
+
 module.exports = AppinfoJsonFile;
+
