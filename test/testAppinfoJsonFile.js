@@ -534,7 +534,7 @@ module.exports.appinfojsonfile = {
             "localized_json/he",
             "localized_json/hi",
             "localized_json/hr",
-            "localized_json/hr",
+            "localized_json/hr/ME",
             "localized_json/hu",
             "localized_json/id",
             "localized_json/is",
