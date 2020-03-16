@@ -47,9 +47,12 @@
         "url": "https://github.com/iLib-js/ilib-loctool-webos-appinfo-json/issues"
     },
     "homepage": "https://github.com/iLib-js/ilib-loctool-webos-appinfo-json#readme",
+    "dependencies": {
+        "ilib": "^14.5.0",
+        "log4js": "^5.0.0"
+    },
     "devDependencies": {
-        "ilib": "^14.4.0",
-        "loctool": "^2.3.1",
+        "loctool": "^2.6.0",
         "nodeunit": "^0.11.3"
     }
 }
