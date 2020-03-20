@@ -47,15 +47,7 @@ var AppinfoJsonFile = function(props) {
     this.baseLocale = langDefaultLocale.getLikelyLocaleMinimal().getSpec() === this.locale.getSpec();
     this.type = props.type;
 
-    // datatype value is using to create reskey
-    var dataTypeMap = {
-        "webos-web":"javascript",
-        "webos-qml": "x-qml",
-        "webos-cpp": "cpp",
-        "webos-c": "cpp"
-    }
-
-    this.datatype = dataTypeMap[this.project.options.projectType] || "javascript";
+    this.datatype = "javascript";
     this.set = this.API.newTranslationSet(this.project ? this.project.sourceLocale : "zxx-XX");
 };
 
