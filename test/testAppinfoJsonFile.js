@@ -337,6 +337,105 @@ module.exports.appinfojsonfile = {
         test.equal(actual, expected);
         test.done();
     },
+    testAppinfoJsonLocalzeTextxJsonKey: function(test) {
+        test.expect(2);
+        var ajf = new AppinfoJsonFile({
+            project: p,
+            type: ajft
+        });
+        test.ok(ajf);
+        ajf.parse({
+            "id": "app",
+            "title": "Photo &amp; Video",
+            "version": "4.0.1",
+            "type": "webos-web",
+            "usePrerendering": true,
+            "v8SnapshotFile": "snapshot_b"
+        });
+        var translations = new TranslationSet();
+        var resource = new ResourceString({
+            project: "app",
+            source: "Photo &amp; Video",
+            sourceLocale: "en-US",
+            key: "Photo &amp; Video",
+            target: "사진 &amp; 동영상",
+            targetLocale: "ko-KR",
+            datatype: "x-json"
+        })
+        translations.add(resource);
+
+        var actual = ajf.localizeText(translations, "ko-KR");
+        var expected = '{\n    "title": "사진 &amp; 동영상"\n}';
+        test.equal(actual, expected);
+        test.done();
+    },
+    testAppinfoJsonLocalzeTextxJsonKey2: function(test) {
+        test.expect(2);
+        var ajf = new AppinfoJsonFile({
+            project: p,
+            type: ajft
+        });
+        test.ok(ajf);
+        ajf.parse({
+            "id": "app",
+            "title": "Photo &amp; Video",
+        });
+        var translations = new TranslationSet();
+        var resource = new ResourceString({
+            project: "app",
+            source: "Photo &amp; Video",
+            sourceLocale: "en-US",
+            key: "Photo &amp; Video",
+            target: "사진 &amp; 동영상",
+            targetLocale: "ko-KR",
+            datatype: "x-json"
+        })
+        translations.add(resource);
+
+        var resource2 = new ResourceString({
+            project: "app",
+            source: "Photo &amp; Video",
+            sourceLocale: "en-US",
+            key: "Photo &amp; Video",
+            target: "사진 &amp; 동영상2",
+            targetLocale: "ko-KR",
+            datatype: "javascript"
+        })
+        translations.add(resource2);
+
+        var actual = ajf.localizeText(translations, "ko-KR");
+        var expected = '{\n    "title": "사진 &amp; 동영상"\n}';
+        test.equal(actual, expected);
+        test.done();
+    },
+    testAppinfoJsonLocalzeTextxJsonKey3: function(test) {
+        test.expect(2);
+        var ajf = new AppinfoJsonFile({
+            project: p,
+            type: ajft
+        });
+        test.ok(ajf);
+        ajf.parse({
+            "id": "app",
+            "title": "Photo &amp; Video",
+        });
+        var translations = new TranslationSet();
+        var resource2 = new ResourceString({
+            project: "app",
+            source: "Photo &amp; Video",
+            sourceLocale: "en-US",
+            key: "Photo &amp; Video",
+            target: "사진 &amp; 동영상2",
+            targetLocale: "ko-KR",
+            datatype: "javascript"
+        })
+        translations.add(resource2);
+
+        var actual = ajf.localizeText(translations, "ko-KR");
+        var expected = '{\n    "title": "사진 &amp; 동영상2"\n}';
+        test.equal(actual, expected);
+        test.done();
+    },
     testAppinfoJsonLocalzeTextMultiple: function(test) {
         test.expect(2);
         var ajf = new AppinfoJsonFile({
@@ -373,7 +472,7 @@ module.exports.appinfojsonfile = {
             key: "Photo &amp; Video@oled",
             target: "사진 &amp; 동영상",
             targetLocale: "ko-KR",
-            datatype: "javascript"
+            datatype: "x-json"
         }));
 
         var actual = ajf.localizeText(translations, "ko-KR");
