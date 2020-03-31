@@ -174,7 +174,7 @@ AppinfoJsonFile.prototype.parse = function(data) {
             });
             this.set.add(r);
         } else {
-            logger.warn("This property doesn't have localized `true` or not match the required data type:  ", property);
+            logger.debug("[" + property + "] property doesn't have localized `true` or not match the required data type.");
         }
     }
 };
@@ -344,4 +344,3 @@ AppinfoJsonFile.prototype.writeManifest = function(filePath) {
 }
 
 module.exports = AppinfoJsonFile;
-
