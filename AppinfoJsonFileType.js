@@ -28,18 +28,7 @@ var AppinfoJsonFileType = function(project) {
     this.resourceType = "json";
     this.project = project;
     this.extensions = [".json"];
-
-    /* in order to match proper xliff
-    * datatype value is using to create reskey
-    */
-    var dataTypeMap = {
-        "webos-web":"javascript",
-        "webos-qml": "x-qml",
-        "webos-cpp": "cpp",
-        "webos-c": "cpp"
-    }
-
-    this.datatype = dataTypeMap[project.options.projectType] || "javascript";
+    this.datatype = "x-json";
 
     this.API = project.getAPI();
     this.extracted = this.API.newTranslationSet(project.getSourceLocale());

@@ -47,7 +47,7 @@ var AppinfoJsonFile = function(props) {
     this.baseLocale = langDefaultLocale.getLikelyLocaleMinimal().getSpec() === this.locale.getSpec();
     this.type = props.type;
 
-    this.datatype = "javascript";
+    this.datatype = "x-json";
     this.set = this.API.newTranslationSet(this.project ? this.project.sourceLocale : "zxx-XX");
 };
 
@@ -174,7 +174,7 @@ AppinfoJsonFile.prototype.parse = function(data) {
             });
             this.set.add(r);
         } else {
-            logger.warn("This property doesn't have localized `true` or not match the required data type:  ", property);
+            logger.debug("[" + property + "] property doesn't have localized `true` or not match the required data type.");
         }
     }
 };
@@ -252,10 +252,12 @@ AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
                 project: this.project.getProjectId(),
                 sourceLocale: this.project.getSourceLocale(),
                 reskey: key,
-                datatype: this.datatype || "javascript"
+                datatype: this.datatype
             });
             var hashkey = tester.hashKeyForTranslation(locale);
-            var translated = translations.getClean(hashkey);
+            var alternativeKey = hashkey.replace("x-json", "javascript");
+
+            var translated = translations.getClean(hashkey) || translations.getClean(alternativeKey);
 
             if (translated) {
                 output[property] = translated.target;
@@ -271,7 +273,7 @@ AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
                     target: this.API.utils.escapeInvalidChars(text),
                     reskey: key,
                     state: "new",
-                    datatype: this.datatype || "javascript"
+                    datatype: this.datatype
                 });
                 this.type.newres.add(r);
             }
@@ -299,8 +301,10 @@ AppinfoJsonFile.prototype.localize = function(translations, locales) {
        if (!this.project.isSourceLocale(locales[i])) {
             var pathName = this.getLocalizedPath(locales[i]);
             var translatedOutput = this.localizeText(translations, locales[i]);
-            this.API.utils.makeDirs(pathName);
-            fs.writeFileSync(pathName + "/appinfo.json", translatedOutput, "utf-8");
+            if (translatedOutput !== "{}") {
+                this.API.utils.makeDirs(pathName);
+                fs.writeFileSync(pathName + "/appinfo.json", translatedOutput, "utf-8");
+            }
        }
     }
 };
@@ -340,4 +344,3 @@ AppinfoJsonFile.prototype.writeManifest = function(filePath) {
 }
 
 module.exports = AppinfoJsonFile;
-

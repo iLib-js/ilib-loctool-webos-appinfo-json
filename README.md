@@ -5,7 +5,8 @@ allows it to read and localize `appinfo.json` file. This plugin is optimized for
 
 ## Release Notes
 v1.2.0
-* Fix code to search javascript group only in xliff file
+* Create `x-json` type which will search first to get a translation. If it doesn't exist, it will search the `javascript` group tag as an alternative.
+* Fix not to create a file if there is no translation data.
 
 v1.1.0
 * Added feature to generate `ilibmanifest.json` file
