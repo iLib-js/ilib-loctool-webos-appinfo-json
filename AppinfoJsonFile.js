@@ -114,11 +114,12 @@ AppinfoJsonFile.prototype.makeKey = function(source) {
 };
 
 AppinfoJsonFile.prototype.loadSchema = function(source) {
-    var localizeProperties = {}, schemaFilePath;
+    var localizeProperties = {}, schemaFilePath, modulePath;
     if (this.project.schema) {
         schemaFilePath = path.join(process.env.PWD, this.project.schema);
     } else {
-        schemaFilePath = path.join(process.env.PWD, "node_modules", "ilib-loctool-webos-appinfo-json", "schema/appinfo.schema.json");
+        modulePath = path.join(require.resolve("ilib-loctool-webos-appinfo-json"), "../");
+        schemaFilePath = path.join(modulePath, "schema/appinfo.schema.json");
     }
     logger.debug("AppinfoJsonFileTyp load Schema File " + schemaFilePath + "?");
     var loadSchemaFile, schemaData;
@@ -244,7 +245,7 @@ AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
     var output = {};
     var stringifyOuput ="";
     for (var property in this.parsedData) {
-        if (this.schema[property]){
+        if (this.schema && this.schema[property]){
             var text = this.parsedData[property];
             var key = this.makeKey(this.API.utils.escapeInvalidChars(text));
             var tester = this.API.newResource({
