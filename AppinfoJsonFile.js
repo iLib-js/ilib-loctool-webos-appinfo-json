@@ -114,12 +114,11 @@ AppinfoJsonFile.prototype.makeKey = function(source) {
 };
 
 AppinfoJsonFile.prototype.loadSchema = function(source) {
-    var localizeProperties = {}, schemaFilePath, modulePath;
+    var localizeProperties = {}, schemaFilePath;
     if (this.project.schema) {
         schemaFilePath = path.join(process.env.PWD, this.project.schema);
     } else {
-        modulePath = path.join(require.resolve("ilib-loctool-webos-appinfo-json"), "../");
-        schemaFilePath = path.join(modulePath, "schema/appinfo.schema.json");
+        schemaFilePath = path.join(__dirname, "schema/appinfo.schema.json");
     }
     logger.debug("AppinfoJsonFileTyp load Schema File " + schemaFilePath + "?");
     var loadSchemaFile, schemaData;
