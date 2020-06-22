@@ -218,7 +218,7 @@ AppinfoJsonFile.prototype.write = function() {};
  * @returns {String} the localized path name
  */
 AppinfoJsonFile.prototype.getLocalizedPath = function(locale) {
-    var rootPath = this.project.getResourceDirs("json")[0] || ".";
+    var rootPath = path.join(this.project.target, this.project.getResourceDirs("json")[0] || ".");
     var fullPath = "";
 
     var splitLocale = locale.split("-");
