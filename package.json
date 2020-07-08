@@ -29,6 +29,7 @@
     "files": [
         "README.md",
         "LICENSE",
+        "log4js.json",
         "AppinfoJsonFileType.js",
         "AppinfoJsonFile.js",
         "schema"

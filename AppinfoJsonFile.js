@@ -19,10 +19,10 @@
 
 var fs = require("fs");
 var path = require("path");
-var Locale = require("ilib/lib/Locale.js");
 var LocaleMatcher = require("ilib/lib/LocaleMatcher.js");
 
 var log4js = require("log4js");
+log4js.configure(path.dirname(module.filename) + '/log4js.json');
 var logger = log4js.getLogger("loctool.plugin.AppinfoJsonFile");
 
 /**
@@ -337,7 +337,7 @@ AppinfoJsonFile.prototype.writeManifest = function(filePath) {
 
     walk(filePath, "");
     for (var i=0; i < manifest.files.length; i++) {
-        logger.info("Generated resource list " + manifest.files[i]);
+        logger.info("Writing out " + manifest.files[i]);
     }
     var manifestFilePath = path.join(filePath, "ilibmanifest.json");
     fs.writeFileSync(manifestFilePath, JSON.stringify(manifest), 'utf8');
