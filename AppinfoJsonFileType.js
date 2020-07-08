@@ -17,11 +17,11 @@
  * limitations under the License.
  */
 
-var fs = require("fs");
 var path = require("path");
 var log4js = require("log4js");
 var AppinfoJsonFile = require("./AppinfoJsonFile.js");
 var logger = log4js.getLogger("loctool.plugin.AppinfoJsonFileType");
+log4js.configure(path.dirname(module.filename) + '/log4js.json');
 
 var AppinfoJsonFileType = function(project) {
     this.type = "json";

@@ -5,7 +5,8 @@ allows it to read and localize `appinfo.json` file. This plugin is optimized for
 
 ## Release Notes
 v1.2.2
-* Fix resource target path
+* Fixed resource target path
+* Updated code to print log with log4js
 
 v1.2.1
 * Fixed to load schema file correctly wherever plugin is installed
