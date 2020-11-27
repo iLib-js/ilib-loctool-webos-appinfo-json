@@ -340,7 +340,9 @@ AppinfoJsonFile.prototype.writeManifest = function(filePath) {
         logger.info("Writing out " + manifest.files[i]);
     }
     var manifestFilePath = path.join(filePath, "ilibmanifest.json");
-    fs.writeFileSync(manifestFilePath, JSON.stringify(manifest), 'utf8');
+    if (manifest.files.length > 0) {
+        fs.writeFileSync(manifestFilePath, JSON.stringify(manifest), 'utf8');
+    }
 }
 
 module.exports = AppinfoJsonFile;
