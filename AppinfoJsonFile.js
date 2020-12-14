@@ -220,16 +220,19 @@ AppinfoJsonFile.prototype.write = function() {};
 AppinfoJsonFile.prototype.getLocalizedPath = function(locale) {
     var rootPath = path.join(this.project.target, this.project.getResourceDirs("json")[0] || ".");
     var fullPath = "";
+    var rootLocale = "en-US";
 
     var splitLocale = locale.split("-");
     if (this.baseLocale) {
-        fullPath = "/" + splitLocale[0];
+        if (locale !== rootLocale) {
+            fullPath = splitLocale[0];
+        }
     } else {
         for (var i=0; i < splitLocale.length; i++) {
             fullPath += "/"+ splitLocale[i];
         }
     }
-    return rootPath + fullPath;
+    return path.join(rootPath, fullPath);
 };
 
 /**
