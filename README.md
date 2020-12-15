@@ -6,6 +6,7 @@ allows it to read and localize `appinfo.json` file. This plugin is optimized for
 ## Release Notes
 v1.2.4
 * Changed en-US translation data to be located in the resource root directory
+* Fixed to generate `ilibmanifest.json` file properly in the nested project localization case.
 
 v1.2.3
 * Fixed not to generate `ilibmanifest.json` when the content is empty.
