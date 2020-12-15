@@ -146,7 +146,7 @@ AppinfoJsonFileType.prototype.getExtensions = function() {
   * Generate manifest file based on created resource files
   */
 AppinfoJsonFileType.prototype.projectClose = function() {
-    var resourceRoot = this.project.getResourceDirs("json")[0] || "resources";
+    var resourceRoot = path.join(this.project.root, this.project.getResourceDirs("json")[0] || "resources");
     var manifestFile = new AppinfoJsonFile({
             project: this.project,
             type: this.type
