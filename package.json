@@ -1,6 +1,6 @@
 {
     "name": "ilib-loctool-webos-appinfo-json",
-    "version": "1.2.4",
+    "version": "1.2.5",
     "main": "AppinfoJsonFileType.js",
     "description": "appinfo.json file handler plugin for webOS platform loctool",
     "license": "Apache-2.0",
@@ -49,11 +49,11 @@
     },
     "homepage": "https://github.com/iLib-js/ilib-loctool-webos-appinfo-json#readme",
     "dependencies": {
-        "ilib": "^14.6.2",
+        "ilib": "^14.7.0",
         "log4js": "^5.0.0"
     },
     "devDependencies": {
-        "loctool": "2.10.0",
+        "loctool": "2.10.2",
         "nodeunit": "^0.11.3"
     }
 }
