@@ -4,8 +4,11 @@ ilib-loctool-webos-appinfo-json is a plugin for the loctool that
 allows it to read and localize `appinfo.json` file. This plugin is optimized for webOS platform
 
 ## Release Notes
+v1.2.6
+* Update dependent module version to have the latest one. (loctool: 2.10.3)
+
 v1.2.5
-* Update dependent module version to have the latest one.
+* Update dependent module version to have the latest one. (loctool: 2.10.2, ilib: ^14.7.0)
 
 v1.2.4
 * Changed en-US translation data to be located in the resource root directory
