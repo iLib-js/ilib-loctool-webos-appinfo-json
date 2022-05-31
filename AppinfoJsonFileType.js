@@ -1,7 +1,7 @@
 /*
  * AppinfoFileType.js - Represents a collection of appinfo.json files
  *
- * Copyright (c) 2019-2020, JEDLSoft
+ * Copyright (c) 2019-2020, 2022 JEDLSoft
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,7 @@
  */
 
 var path = require("path");
-var log4js = require("log4js");
 var AppinfoJsonFile = require("./AppinfoJsonFile.js");
-var logger = log4js.getLogger("loctool.plugin.AppinfoJsonFileType");
-log4js.configure(path.dirname(module.filename) + '/log4js.json');
 
 var AppinfoJsonFileType = function(project) {
     this.type = "json";
@@ -31,6 +28,7 @@ var AppinfoJsonFileType = function(project) {
     this.datatype = "x-json";
 
     this.API = project.getAPI();
+    this.logger = this.API.getLogger("loctool.plugin.webOSAppinfoFileType");
     this.extracted = this.API.newTranslationSet(project.getSourceLocale());
     this.newres = this.API.newTranslationSet(project.getSourceLocale());
     this.pseudo = this.API.newTranslationSet(project.getSourceLocale());
@@ -45,7 +43,7 @@ var AppinfoJsonFileType = function(project) {
  * otherwise
  */
 AppinfoJsonFileType.prototype.handles = function(pathName) {
-    logger.debug("AppinfoJsonFileTyp handles " + pathName + "?");
+    this.logger.debug("AppinfoJsonFileTyp handles " + pathName + "?");
     if (!pathName) return false;
     
     return (path.basename(pathName) === "appinfo.json") ? true : false

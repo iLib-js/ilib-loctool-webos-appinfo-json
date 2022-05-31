@@ -1,7 +1,7 @@
 /*
  * AppinfoFile.js - plugin to extract resources from a appinfo.json code file
  *
- * Copyright (c) 2019-2020, JEDLSoft
+ * Copyright (c) 2019-2020, 2022 JEDLSoft
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,6 @@ var fs = require("fs");
 var path = require("path");
 var LocaleMatcher = require("ilib/lib/LocaleMatcher.js");
 
-var log4js = require("log4js");
-log4js.configure(path.dirname(module.filename) + '/log4js.json');
-var logger = log4js.getLogger("loctool.plugin.AppinfoJsonFile");
-
 /**
  * Create a new appinfo.json file with the given path name and within
  * the given project.
@@ -35,20 +31,20 @@ var logger = log4js.getLogger("loctool.plugin.AppinfoJsonFile");
  * @param {FileType} type the file type of this instance
  */
 var AppinfoJsonFile = function(props) {
-    var lanDefaultLocale, propsLocale;
-
+    var langDefaultLocale;
     this.baseLocale = false;
     this.project = props.project;
     this.pathName = props.pathName;
-    this.locale = new LocaleMatcher({locale:props.locale}).getLikelyLocaleMinimal();
     this.API = props.project.getAPI();
 
+    this.locale = new LocaleMatcher({locale:props.locale}).getLikelyLocaleMinimal();
     langDefaultLocale = new LocaleMatcher({locale: this.locale.language});
     this.baseLocale = langDefaultLocale.getLikelyLocaleMinimal().getSpec() === this.locale.getSpec();
     this.type = props.type;
 
     this.datatype = "x-json";
     this.set = this.API.newTranslationSet(this.project ? this.project.sourceLocale : "zxx-XX");
+    this.logger = this.API.getLogger("loctool.plugin.webOSAppinfoFile");
 };
 
 /**
@@ -120,14 +116,14 @@ AppinfoJsonFile.prototype.loadSchema = function(source) {
     } else {
         schemaFilePath = path.join(__dirname, "schema/appinfo.schema.json");
     }
-    logger.debug("AppinfoJsonFileTyp load Schema File " + schemaFilePath + "?");
+    this.logger.debug("AppinfoJsonFileTyp load Schema File " + schemaFilePath + "?");
     var loadSchemaFile, schemaData;
 
     if (fs.existsSync(schemaFilePath)) {
         loadSchemaFile = fs.readFileSync(schemaFilePath, "utf-8");
         schemaData = JSON.parse(loadSchemaFile);
     } else {
-        logger.warn("Could not open schema file: " + schemaFilePath);
+        this.logger.warn("Could not open schema file: " + schemaFilePath);
     }
 
     for (var key in schemaData.properties) {
@@ -144,7 +140,7 @@ AppinfoJsonFile.prototype.loadSchema = function(source) {
  * @param {String} data the string to parse
  */
 AppinfoJsonFile.prototype.parse = function(data) {
-    logger.debug("Extracting strings from " + this.pathName);
+    this.logger.debug("Extracting strings from " + this.pathName);
 
     this.parsedData = data;
 
@@ -174,7 +170,7 @@ AppinfoJsonFile.prototype.parse = function(data) {
             });
             this.set.add(r);
         } else {
-            logger.debug("[" + property + "] property doesn't have localized `true` or not match the required data type.");
+            this.logger.debug("[" + property + "] property doesn't have localized `true` or not match the required data type.");
         }
     }
 };
@@ -184,7 +180,7 @@ AppinfoJsonFile.prototype.parse = function(data) {
  * project's translation set.
  */
 AppinfoJsonFile.prototype.extract = function() {
-    logger.debug("Extracting strings from " + this.pathName);
+    this.logger.debug("Extracting strings from " + this.pathName);
     if (this.pathName) {
         var p = path.join(this.project.root, this.pathName);
         try {
@@ -193,7 +189,7 @@ AppinfoJsonFile.prototype.extract = function() {
                 this.parse(data);
             }
         } catch (e) {
-            logger.warn("Could not read file: " + p);
+            this.logger.warn("Could not read file: " + p);
         }
     }
 };
@@ -265,7 +261,7 @@ AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
             if (translated) {
                 output[property] = translated.target;
             } else {
-                logger.trace("New string found: " + text);
+                this.logger.trace("New string found: " + text);
                 var r = this.API.newResource({
                     resType: "string",
                     project: this.project.getProjectId(),
@@ -340,7 +336,7 @@ AppinfoJsonFile.prototype.writeManifest = function(filePath) {
 
     walk(filePath, "");
     for (var i=0; i < manifest.files.length; i++) {
-        logger.info("Writing out", path.join(filePath, manifest.files[i]) + " to Manifest file");
+        this.logger.info("Writing out", path.join(filePath, manifest.files[i]) + " to Manifest file");
     }
     var manifestFilePath = path.join(filePath, "ilibmanifest.json");
     if (manifest.files.length > 0) {
