@@ -740,5 +740,50 @@ module.exports.appinfojsonfile = {
             test.equal(jsrf.getLocalizedPath(locales[i]), expected[i]);
         }
         test.done();
-    }
+    },
+    testJSONResourceFileGetResourceFilePathsWithTranslations: function(test) {
+        test.expect(5);
+        var ajf = new AppinfoJsonFile({
+            project: p,
+            type: ajft
+        });
+        test.ok(ajf);
+        ajf.parse({
+            "id": "app",
+            "title": "Live TV",
+        });
+        var translations = new TranslationSet();
+        var resource = new ResourceString({
+            project: "app",
+            source: "Live TV",
+            sourceLocale: "en-US",
+            key: "Live TV",
+            target: "(fr-FR) Live TV",
+            targetLocale: "fr-FR",
+            datatype: "x-json"
+        })
+        translations.add(resource);
+
+        var resource2 = new ResourceString({
+            project: "app",
+            source: "Live TV",
+            sourceLocale: "en-US",
+            key: "Live TV",
+            target: "(fr-CA) Live TV",
+            targetLocale: "fr-CA",
+            datatype: "x-json"
+        })
+        translations.add(resource2);
+
+        var actual = ajf.localizeText(translations, "fr-FR");
+        var expected = '{\n    "title": "(fr-FR) Live TV"\n}';
+        test.equal(actual, expected);
+        var actual2 = ajf.localizeText(translations, "fr-CA");
+        var expected2 = '{\n    "title": "(fr-CA) Live TV"\n}';
+        test.equal(actual2, expected2);
+
+        test.equal(ajf.getLocalizedPath("fr-FR"), "test/testfiles/localized_json/fr");
+        test.equal(ajf.getLocalizedPath("fr-CA"), "test/testfiles/localized_json/fr/CA");
+        test.done();
+    },
 };
