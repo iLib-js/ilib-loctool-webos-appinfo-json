@@ -20,7 +20,7 @@
 var fs = require("fs");
 var path = require("path");
 var LocaleMatcher = require("ilib/lib/LocaleMatcher.js");
-var Locale = require("ilib/lib/Locale");
+var Locale = require("ilib/lib/Locale.js");
 
 /**
  * Create a new appinfo.json file with the given path name and within
@@ -213,13 +213,10 @@ AppinfoJsonFile.prototype.write = function() {};
  * Return true if the current locale is matched baseLocale
  */
  AppinfoJsonFile.prototype._isBaseLocale = function(locale) {
-    var isBaseLocale = false;
     var langDefaultLocale = new LocaleMatcher({locale: locale.language});
-
     this.locale = new LocaleMatcher({locale:locale}).getLikelyLocaleMinimal();
-    isBaseLocale = langDefaultLocale.getLikelyLocaleMinimal().getSpec() === this.locale.getSpec();
 
-    return isBaseLocale;
+    return langDefaultLocale.getLikelyLocaleMinimal().getSpec() === this.locale.getSpec();
 }
 
 /**
