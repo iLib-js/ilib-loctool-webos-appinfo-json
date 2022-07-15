@@ -20,6 +20,7 @@
 var fs = require("fs");
 var path = require("path");
 var LocaleMatcher = require("ilib/lib/LocaleMatcher.js");
+var Locale = require("ilib/lib/Locale.js");
 
 /**
  * Create a new appinfo.json file with the given path name and within
@@ -207,6 +208,17 @@ AppinfoJsonFile.prototype.getTranslationSet = function() {
 // we don't localize or write appinfo.json source files
 AppinfoJsonFile.prototype.write = function() {};
 
+
+/**
+ * Return true if the current locale is matched baseLocale
+ */
+ AppinfoJsonFile.prototype._isBaseLocale = function(locale) {
+    var langDefaultLocale = new LocaleMatcher({locale: locale.language});
+    this.locale = new LocaleMatcher({locale:locale}).getLikelyLocaleMinimal();
+
+    return langDefaultLocale.getLikelyLocaleMinimal().getSpec() === this.locale.getSpec();
+}
+
 /**
  * Return the location on disk where the version of this file localized
  * for the given locale should be written.
@@ -219,6 +231,12 @@ AppinfoJsonFile.prototype.getLocalizedPath = function(locale) {
     var rootLocale = "en-US";
 
     var splitLocale = locale.split("-");
+
+    if (locale !== this.locale.getSpec()){
+        locale = new Locale(locale);
+        this.baseLocale = this._isBaseLocale(locale);
+    }
+
     if (this.baseLocale) {
         if (locale !== rootLocale) {
             fullPath = splitLocale[0];
