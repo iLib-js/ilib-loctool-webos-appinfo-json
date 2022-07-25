@@ -5,28 +5,28 @@ allows it to read and localize `appinfo.json` file. This plugin is optimized for
 
 ## Release Notes
 v1.2.11
-* Updated dependencies
+* Updated dependencies. (loctool: 2.16.3)
 * Used the logger provided by the loctool instead of using log4js directly.
-* Added node 16 version testing for circleCI (minimum version of node is v10)
+* Added node 16 version testing for circleCI (minimum version of node is v10.0.0)
 * Fixed to set baseLocale correctly when calculating resource path.
 
 v1.2.10
-* Update dependent module version to have the latest one. (loctool: 2.16.2)
+* Updated dependent module version to have the latest one. (loctool: 2.16.2)
 
 v1.2.9
-* Update dependent module version to have the latest one. (loctool: 2.14.1)
+* Updated dependent module version to have the latest one. (loctool: 2.14.1)
 
 v1.2.8
-* Update dependent module version to have the latest one. (loctool: 2.13.0)
+* Updated dependent module version to have the latest one. (loctool: 2.13.0)
 
 v1.2.7
-* Update dependent module version to have the latest one. (loctool: 2.12.0)
+* Updated dependent module version to have the latest one. (loctool: 2.12.0)
 
 v1.2.6
-* Update dependent module version to have the latest one. (loctool: 2.10.3)
+* Updated dependent module version to have the latest one. (loctool: 2.10.3)
 
 v1.2.5
-* Update dependent module version to have the latest one.
+* Updated dependent module version to have the latest one.
 
 v1.2.4
 * Changed en-US translation data to be located in the resource root directory
@@ -43,7 +43,7 @@ v1.2.1
 * Fixed to load schema file correctly wherever plugin is installed
 
 v1.2.0
-* Create `x-json` type which will search first to get a translation. If it doesn't exist, it will search the `javascript` group tag as an alternative.
+* Created `x-json` type which will search first to get a translation. If it doesn't exist, it will search the `javascript` group tag as an alternative.
 * Fix not to create a file if there is no translation data.
 
 v1.1.0

@@ -43,10 +43,9 @@
         "debug": "node --inspect-brk test/testSuite.js",
         "clean": "git clean -f -d *"
     },
-    "bugs": {
-        "url": "https://github.com/iLib-js/ilib-loctool-webos-appinfo-json/issues"
+    "engines": {
+        "node": ">=10.0.0"
     },
-    "homepage": "https://github.com/iLib-js/ilib-loctool-webos-appinfo-json#readme",
     "dependencies": {
         "ilib": "^14.14.0"
     },
