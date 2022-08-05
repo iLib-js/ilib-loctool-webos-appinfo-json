@@ -5,6 +5,10 @@ allows it to read and localize `appinfo.json` file. This plugin is optimized for
 
 ## Release Notes
 v1.2.11
+* Updated dependencies. (loctool: 2.17.0)
+* Fixed not to generate duplicated resource by comparing language default locale translation.
+
+v1.2.11
 * Updated dependencies. (loctool: 2.16.3)
 * Used the logger provided by the loctool instead of using log4js directly.
 * Added node 16 version testing for circleCI (minimum version of node is v10.0.0)

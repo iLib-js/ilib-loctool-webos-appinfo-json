@@ -19,8 +19,7 @@
 
 var fs = require("fs");
 var path = require("path");
-var LocaleMatcher = require("ilib/lib/LocaleMatcher.js");
-var Locale = require("ilib/lib/Locale.js");
+var Utils = require("loctool/lib/utils.js");
 
 /**
  * Create a new appinfo.json file with the given path name and within
@@ -32,15 +31,11 @@ var Locale = require("ilib/lib/Locale.js");
  * @param {FileType} type the file type of this instance
  */
 var AppinfoJsonFile = function(props) {
-    var langDefaultLocale;
-    this.baseLocale = false;
+
     this.project = props.project;
     this.pathName = props.pathName;
     this.API = props.project.getAPI();
-
-    this.locale = new LocaleMatcher({locale:props.locale}).getLikelyLocaleMinimal();
-    langDefaultLocale = new LocaleMatcher({locale: this.locale.language});
-    this.baseLocale = langDefaultLocale.getLikelyLocaleMinimal().getSpec() === this.locale.getSpec();
+    this.baseLocale = Utils.isBaseLocale(props.locale);
     this.type = props.type;
 
     this.datatype = "x-json";
@@ -210,16 +205,6 @@ AppinfoJsonFile.prototype.write = function() {};
 
 
 /**
- * Return true if the current locale is matched baseLocale
- */
- AppinfoJsonFile.prototype._isBaseLocale = function(locale) {
-    var langDefaultLocale = new LocaleMatcher({locale: locale.language});
-    this.locale = new LocaleMatcher({locale:locale}).getLikelyLocaleMinimal();
-
-    return langDefaultLocale.getLikelyLocaleMinimal().getSpec() === this.locale.getSpec();
-}
-
-/**
  * Return the location on disk where the version of this file localized
  * for the given locale should be written.
  * @param {String] locale the locale spec for the target locale
@@ -231,11 +216,7 @@ AppinfoJsonFile.prototype.getLocalizedPath = function(locale) {
     var rootLocale = "en-US";
 
     var splitLocale = locale.split("-");
-
-    if (locale !== this.locale.getSpec()){
-        locale = new Locale(locale);
-        this.baseLocale = this._isBaseLocale(locale);
-    }
+    this.baseLocale = Utils.isBaseLocale(locale);
 
     if (this.baseLocale) {
         if (locale !== rootLocale) {
@@ -259,7 +240,8 @@ AppinfoJsonFile.prototype.getLocalizedPath = function(locale) {
  */
 AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
     var output = {};
-    var stringifyOuput ="";
+    var stringifyOuput = "";
+    var langDefaultLocale, baseTranslation;
     for (var property in this.parsedData) {
         if (this.schema && this.schema[property]){
             var text = this.parsedData[property];
@@ -277,7 +259,27 @@ AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
             var translated = translations.getClean(hashkey) || translations.getClean(alternativeKey);
 
             if (translated) {
-                output[property] = translated.target;
+                langDefaultLocale = Utils.getBaseLocale(locale);
+                baseTranslation = key;
+
+                if (langDefaultLocale === locale) {
+                    langDefaultLocale = 'en-US'; // language default locale need to compare with root data
+                }
+
+                if (locale !== 'en-US') {
+                    var hashkey2 = tester.hashKeyForTranslation(langDefaultLocale);
+                    var alternativeKey2 = hashkey.replace("x-json", "javascript").replace(locale, langDefaultLocale);
+
+                    var translated2 = translations.getClean(hashkey2) || translations.getClean(alternativeKey2);
+                    if (translated2) {
+                        baseTranslation = translated2.target;
+                    }
+                }
+
+                if (baseTranslation !== translated.target) {
+                    output[property] = translated.target;
+                }
+
             } else {
                 this.logger.trace("New string found: " + text);
                 var r = this.API.newResource({
@@ -316,9 +318,9 @@ AppinfoJsonFile.prototype.localize = function(translations, locales) {
     // don't localize if there is no text
     for (var i=0; i < locales.length; i++) {
        if (!this.project.isSourceLocale(locales[i])) {
-            var pathName = this.getLocalizedPath(locales[i]);
             var translatedOutput = this.localizeText(translations, locales[i]);
             if (translatedOutput !== "{}") {
+                var pathName = this.getLocalizedPath(locales[i]);
                 this.API.utils.makeDirs(pathName);
                 fs.writeFileSync(pathName + "/appinfo.json", translatedOutput, "utf-8");
             }
