@@ -530,7 +530,7 @@ module.exports.appinfojsonfile = {
             "test/testfiles/localized_json/as",
             "test/testfiles/localized_json/az",
             "test/testfiles/localized_json/bg",
-            "test/testfiles/localized_json/bn",
+            "test/testfiles/localized_json/bn/IN",
             "test/testfiles/localized_json/bs",
             "test/testfiles/localized_json/bs/Latn/ME",
             "test/testfiles/localized_json/cs",
