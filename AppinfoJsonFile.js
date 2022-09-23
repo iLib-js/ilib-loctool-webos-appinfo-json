@@ -316,6 +316,9 @@ AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
   */
 AppinfoJsonFile.prototype.localize = function(translations, locales) {
     // don't localize if there is no text
+    if (this.project.settings.localeMap) {
+        Utils.setBaseLocale(this.project.settings.localeMap);
+    }
     for (var i=0; i < locales.length; i++) {
        if (!this.project.isSourceLocale(locales[i])) {
             var translatedOutput = this.localizeText(translations, locales[i]);
