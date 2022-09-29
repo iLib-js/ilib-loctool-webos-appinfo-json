@@ -35,7 +35,7 @@ var AppinfoJsonFile = function(props) {
     this.pathName = props.pathName;
     this.API = props.project.getAPI();
 
-    if (this.project.localeMap) {
+    if (Object.keys(this.project.localeMap).length > 0) {
         Utils.setBaseLocale(this.project.localeMap);
     }
     this.baseLocale = Utils.isBaseLocale(props.locale);
