@@ -31,10 +31,13 @@ var Utils = require("loctool/lib/utils.js");
  * @param {FileType} type the file type of this instance
  */
 var AppinfoJsonFile = function(props) {
-
     this.project = props.project;
     this.pathName = props.pathName;
     this.API = props.project.getAPI();
+
+    if (Object.keys(this.project.localeMap).length > 0) {
+        Utils.setBaseLocale(this.project.localeMap);
+    }
     this.baseLocale = Utils.isBaseLocale(props.locale);
     this.type = props.type;
 
