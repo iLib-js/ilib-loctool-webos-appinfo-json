@@ -245,6 +245,7 @@ AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
     var output = {};
     var stringifyOuput = "";
     var langDefaultLocale, baseTranslation;
+    var customInheritLocale;
     for (var property in this.parsedData) {
         if (this.schema && this.schema[property]){
             var text = this.parsedData[property];
@@ -260,6 +261,7 @@ AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
             var alternativeKey = hashkey.replace("x-json", "javascript");
 
             var translated = translations.getClean(hashkey) || translations.getClean(alternativeKey);
+            customInheritLocale = this.project.getLocaleInherit(locale);
 
             if (translated) {
                 langDefaultLocale = Utils.getBaseLocale(locale);
@@ -283,6 +285,30 @@ AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
                     output[property] = translated.target;
                 }
 
+            } else if(!translated && customInheritLocale) {
+                var hashkey2 = tester.hashKeyForTranslation(customInheritLocale);
+                var alternativeKey2 = hashkey.replace("x-json", "javascript").replace(locale, customInheritLocale);
+                var translated2 = translations.getClean(hashkey2) || translations.getClean(alternativeKey2);
+
+                if (translated2) {
+                    baseTranslation = translated2.target;
+                    output[property] = translated2.target;
+                } else {
+                    this.logger.trace("New string found: " + text);
+                    var r = this.API.newResource({
+                        resType: "string",
+                        project: this.project.getProjectId(),
+                        key: this.makeKey(this.API.utils.escapeInvalidChars(text)),
+                        sourceLocale: this.project.getSourceLocale(),
+                        source: this.API.utils.escapeInvalidChars(text),
+                        targetLocale: locale,
+                        target: this.API.utils.escapeInvalidChars(text),
+                        reskey: key,
+                        state: "new",
+                        datatype: this.datatype
+                    });
+                    this.type.newres.add(r);
+                }
             } else {
                 this.logger.trace("New string found: " + text);
                 var r = this.API.newResource({
