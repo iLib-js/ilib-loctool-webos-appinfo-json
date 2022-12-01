@@ -5,12 +5,35 @@ allows it to read and localize `appinfo.json` file. This plugin is optimized for
 
 ## Release Notes
 v1.4.0
-* Updated dependencies. (loctool: 2.19.0)
+* Updated dependencies. (loctool: 2.20.0)
 * Added ability to define custom locale inheritance.
+    ~~~~
+       "settings": {
+            "localeInherit": {
+                "en-AU": "en-GB"
+            }
+        }
+    ~~~~
+* Added ability to use common locale data.
+  * App's xliff data has a higher priority, if there's no matched string there, then loctool checks data in the commonXliff directory.
+    ~~~~
+       "settings": {
+            "webos": {
+                "commonXliff": "./common"
+            }
+        }
+    ~~~~
 
 v1.3.0
 * Updated dependencies. (loctool: 2.18.0)
 * Added ability to override language default locale.
+    ~~~~
+       "settings": {
+            "localeMap": {
+                "es-CO": "es"
+            }
+        }
+    ~~~~
 
 v1.2.12
 * Updated dependencies. (loctool: 2.17.0)
