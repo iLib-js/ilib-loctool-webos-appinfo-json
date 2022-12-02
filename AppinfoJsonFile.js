@@ -20,6 +20,7 @@
 var fs = require("fs");
 var path = require("path");
 var Utils = require("loctool/lib/utils.js");
+var ResourceString = require("loctool/lib/ResourceString.js");
 
 /**
  * Create a new appinfo.json file with the given path name and within
@@ -33,6 +34,7 @@ var Utils = require("loctool/lib/utils.js");
 var AppinfoJsonFile = function(props) {
     this.project = props.project;
     this.pathName = props.pathName;
+    this.datatype = "x-json";
     this.API = props.project.getAPI();
 
     if (Object.keys(this.project.localeMap).length > 0) {
@@ -40,10 +42,12 @@ var AppinfoJsonFile = function(props) {
     }
     this.baseLocale = Utils.isBaseLocale(props.locale);
     this.type = props.type;
-
-    this.datatype = "x-json";
     this.set = this.API.newTranslationSet(this.project ? this.project.sourceLocale : "zxx-XX");
     this.logger = this.API.getLogger("loctool.plugin.webOSAppinfoFile");
+
+    if (props.project.settings.webos && props.project.settings.webos["commonXliff"]){
+        this.commonPath = props.project.settings.webos["commonXliff"];
+    }
 };
 
 /**
@@ -233,6 +237,22 @@ AppinfoJsonFile.prototype.getLocalizedPath = function(locale) {
     return path.join(rootPath, fullPath);
 };
 
+AppinfoJsonFile.prototype._addnewResource = function(text, key, locale) {
+    var newres = this.API.newResource({
+        resType: "string",
+        project: this.project.getProjectId(),
+        key: this.makeKey(this.API.utils.escapeInvalidChars(text)),
+        sourceLocale: this.project.getSourceLocale(),
+        source: this.API.utils.escapeInvalidChars(text),
+        targetLocale: locale,
+        target: this.API.utils.escapeInvalidChars(text),
+        reskey: key,
+        state: "new",
+        datatype: this.datatype
+    });
+    return newres;
+}
+
 /**
  * Localize the text of the current file to the given locale and return
  * the results.
@@ -273,8 +293,7 @@ AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
 
                 if (locale !== 'en-US') {
                     var hashkey2 = tester.hashKeyForTranslation(langDefaultLocale);
-                    var alternativeKey2 = hashkey.replace("x-json", "javascript").replace(locale, langDefaultLocale);
-
+                    var alternativeKey2 = ResourceString.hashKey(tester.getProject(), langDefaultLocale, tester.getKey(), "javascript", tester.getFlavor());
                     var translated2 = translations.getClean(hashkey2) || translations.getClean(alternativeKey2);
                     if (translated2) {
                         baseTranslation = translated2.target;
@@ -285,9 +304,51 @@ AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
                     output[property] = translated.target;
                 }
 
+            } else if (!translated && this.isloadCommonData){
+                var comonDataKey = ResourceString.hashKey(this.commonPrjName, locale, tester.getKey(), this.commonPrjType, tester.getFlavor());
+                translated = translations.getClean(comonDataKey);
+                if (translated) {
+                    langDefaultLocale = Utils.getBaseLocale(locale);
+                    baseTranslation = key;
+
+                    if (langDefaultLocale === locale) {
+                        langDefaultLocale = 'en-US'; // language default locale need to compare with root data
+                    }
+
+                    if (locale !== 'en-US') {
+                        var hashkey2 = tester.hashKeyForTranslation(langDefaultLocale);
+                    
+                        var alternativeKey2 = ResourceString.hashKey(tester.getProject(), langDefaultLocale, tester.getKey(), "javascript", tester.getFlavor());
+                        var translated2 = translations.getClean(hashkey2) || translations.getClean(alternativeKey2);
+                        if (translated2) {
+                            baseTranslation = translated2.target;
+                        }
+                    }
+                    if (baseTranslation !== translated.target) {
+                        output[property] = translated.target;
+                    }
+                } else if (!translated && customInheritLocale) {
+                    var hashkey2 = tester.hashKeyForTranslation(customInheritLocale);
+                    var alternativeKey2 = ResourceString.hashKey(tester.getProject(), customInheritLocale, tester.getKey(), "javascript", tester.getFlavor());
+                    var translated2 = translations.getClean(hashkey2) || translations.getClean(alternativeKey2);
+
+                    if (translated2) {
+                        baseTranslation = translated2.target;
+                        output[property] = translated2.target;
+                    } else {
+                        this.logger.trace("New string found: " + text);
+                        var r  = this._addnewResource(text, key, locale);
+                        this.type.newres.add(r);
+                    }
+                } else {
+                    this.logger.trace("New string found: " + text);
+                    var r  = this._addnewResource(text, key, locale);
+                    this.type.newres.add(r);
+                }
+
             } else if(!translated && customInheritLocale) {
                 var hashkey2 = tester.hashKeyForTranslation(customInheritLocale);
-                var alternativeKey2 = hashkey.replace("x-json", "javascript").replace(locale, customInheritLocale);
+                var alternativeKey2 = ResourceString.hashKey(tester.getProject(), customInheritLocale, tester.getKey(), "javascript", tester.getFlavor());
                 var translated2 = translations.getClean(hashkey2) || translations.getClean(alternativeKey2);
 
                 if (translated2) {
@@ -295,34 +356,12 @@ AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
                     output[property] = translated2.target;
                 } else {
                     this.logger.trace("New string found: " + text);
-                    var r = this.API.newResource({
-                        resType: "string",
-                        project: this.project.getProjectId(),
-                        key: this.makeKey(this.API.utils.escapeInvalidChars(text)),
-                        sourceLocale: this.project.getSourceLocale(),
-                        source: this.API.utils.escapeInvalidChars(text),
-                        targetLocale: locale,
-                        target: this.API.utils.escapeInvalidChars(text),
-                        reskey: key,
-                        state: "new",
-                        datatype: this.datatype
-                    });
+                    var r  = this._addnewResource(text, key, locale);
                     this.type.newres.add(r);
                 }
             } else {
                 this.logger.trace("New string found: " + text);
-                var r = this.API.newResource({
-                    resType: "string",
-                    project: this.project.getProjectId(),
-                    key: this.makeKey(this.API.utils.escapeInvalidChars(text)),
-                    sourceLocale: this.project.getSourceLocale(),
-                    source: this.API.utils.escapeInvalidChars(text),
-                    targetLocale: locale,
-                    target: this.API.utils.escapeInvalidChars(text),
-                    reskey: key,
-                    state: "new",
-                    datatype: this.datatype
-                });
+                var r  = this._addnewResource(text, key, locale);
                 this.type.newres.add(r);
             }
         }
@@ -345,6 +384,12 @@ AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
   */
 AppinfoJsonFile.prototype.localize = function(translations, locales) {
     // don't localize if there is no text
+
+    if (this.commonPath && !this.isloadCommonData) {
+        this._loadCommonXliff(translations);
+        this.isloadCommonData = true;
+    }
+
     for (var i=0; i < locales.length; i++) {
        if (!this.project.isSourceLocale(locales[i])) {
             var translatedOutput = this.localizeText(translations, locales[i]);
@@ -355,6 +400,31 @@ AppinfoJsonFile.prototype.localize = function(translations, locales) {
             }
        }
     }
+};
+
+AppinfoJsonFile.prototype._loadCommonXliff = function(tsdata) {
+    if (fs.existsSync(this.commonPath)){
+        var list = fs.readdirSync(this.commonPath);
+    }
+    list.forEach(function(file){
+        var commonXliff = this.API.newXliff({
+            sourceLocale: this.project.getSourceLocale(),
+            project: this.project.getProjectId(),
+            path: this.commonPath,
+        });
+        var pathName = path.join(this.commonPath, file);
+        var data = fs.readFileSync(pathName, "utf-8");
+        commonXliff.deserialize(data);
+        var resources = commonXliff.getResources();
+        
+        if (resources.length > 0){
+            this.commonPrjName = resources[0].getProject();
+            this.commonPrjType = resources[0].getDataType();
+            resources.forEach(function(res){
+                tsdata.add(res);
+            }.bind(this));
+        }
+    }.bind(this));
 };
 
 /**
