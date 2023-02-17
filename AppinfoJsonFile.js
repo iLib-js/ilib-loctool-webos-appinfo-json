@@ -253,6 +253,25 @@ AppinfoJsonFile.prototype._addnewResource = function(text, key, locale) {
     return newres;
 }
 
+AppinfoJsonFile.prototype._getBaseTranslation = function(locale, translations, tester) {
+    if (!locale) return;
+    var langDefaultLocale = Utils.getBaseLocale(locale);
+    var baseTranslation;
+    if (langDefaultLocale === locale) {
+        langDefaultLocale = 'en-US'; // language default locale need to compare with root data
+    }
+
+    if (locale !== 'en-US') {
+        var hashkey = tester.hashKeyForTranslation(langDefaultLocale);
+        var alternativeKey = ResourceString.hashKey(tester.getProject(), langDefaultLocale, tester.getKey(), "javascript", tester.getFlavor());
+        var translated = translations.getClean(hashkey) || translations.getClean(alternativeKey);
+        if (translated) {
+            baseTranslation = translated.target;
+        }
+    }
+    return baseTranslation;
+}
+
 /**
  * Localize the text of the current file to the given locale and return
  * the results.
@@ -264,7 +283,7 @@ AppinfoJsonFile.prototype._addnewResource = function(text, key, locale) {
 AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
     var output = {};
     var stringifyOuput = "";
-    var langDefaultLocale, baseTranslation;
+    var baseTranslation;
     var customInheritLocale;
     for (var property in this.parsedData) {
         if (this.schema && this.schema[property]){
@@ -282,24 +301,10 @@ AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
 
             var translated = translations.getClean(hashkey) || translations.getClean(alternativeKey);
             customInheritLocale = this.project.getLocaleInherit(locale);
+            baseTranslation = key;
 
             if (translated) {
-                langDefaultLocale = Utils.getBaseLocale(locale);
-                baseTranslation = key;
-
-                if (langDefaultLocale === locale) {
-                    langDefaultLocale = 'en-US'; // language default locale need to compare with root data
-                }
-
-                if (locale !== 'en-US') {
-                    var hashkey2 = tester.hashKeyForTranslation(langDefaultLocale);
-                    var alternativeKey2 = ResourceString.hashKey(tester.getProject(), langDefaultLocale, tester.getKey(), "javascript", tester.getFlavor());
-                    var translated2 = translations.getClean(hashkey2) || translations.getClean(alternativeKey2);
-                    if (translated2) {
-                        baseTranslation = translated2.target;
-                    }
-                }
-
+                baseTranslation = this._getBaseTranslation(locale, translations, tester);
                 if (baseTranslation !== translated.target) {
                     output[property] = translated.target;
                 }
@@ -308,22 +313,7 @@ AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
                 var comonDataKey = ResourceString.hashKey(this.commonPrjName, locale, tester.getKey(), this.commonPrjType, tester.getFlavor());
                 translated = translations.getClean(comonDataKey);
                 if (translated) {
-                    langDefaultLocale = Utils.getBaseLocale(locale);
-                    baseTranslation = key;
-
-                    if (langDefaultLocale === locale) {
-                        langDefaultLocale = 'en-US'; // language default locale need to compare with root data
-                    }
-
-                    if (locale !== 'en-US') {
-                        var hashkey2 = tester.hashKeyForTranslation(langDefaultLocale);
-                    
-                        var alternativeKey2 = ResourceString.hashKey(tester.getProject(), langDefaultLocale, tester.getKey(), "javascript", tester.getFlavor());
-                        var translated2 = translations.getClean(hashkey2) || translations.getClean(alternativeKey2);
-                        if (translated2) {
-                            baseTranslation = translated2.target;
-                        }
-                    }
+                    baseTranslation = this._getBaseTranslation(locale, translations, tester);
                     if (baseTranslation !== translated.target) {
                         output[property] = translated.target;
                     }
@@ -333,8 +323,10 @@ AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
                     var translated2 = translations.getClean(hashkey2) || translations.getClean(alternativeKey2);
 
                     if (translated2) {
-                        baseTranslation = translated2.target;
-                        output[property] = translated2.target;
+                        baseTranslation = this._getBaseTranslation(locale, translations, tester);
+                        if (baseTranslation !== translated2.target) {
+                            output[property] = translated2.target;
+                        }
                     } else {
                         this.logger.trace("New string found: " + text);
                         var r  = this._addnewResource(text, key, locale);
