@@ -5,6 +5,7 @@ allows it to read and localize `appinfo.json` file. This plugin is optimized for
 
 ## Release Notes
 v1.5.0
+* Updated dependencies. (loctool: 2.20.2)
 * Fixed not generating duplicated resources by comparing language default locale translation even if the locale follows the locale inheritance rule.
 
 v1.4.1
