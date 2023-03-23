@@ -6,7 +6,7 @@ allows it to read and localize `appinfo.json` file. This plugin is optimized for
 ## Release Notes
 v1.6.0
 * Added to timestampe in `ilibmanifest.json` file to support wee localization.
-* Updated to skip writing `ilibmmanifest json` creation logic if it has already been done in another plugin.
+* Updated to skip writing `ilibmanifest.json` creation logic if it has already been done in another plugin.
 
 v1.5.0
 * Updated dependencies. (loctool: 2.20.2)
