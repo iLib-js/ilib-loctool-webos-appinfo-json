@@ -449,11 +449,17 @@ AppinfoJsonFile.prototype.writeManifest = function(filePath) {
 
     walk(filePath, "");
     var manifestFilePath = path.join(filePath, "ilibmanifest.json");
-    if (!fs.existsSync(manifestFilePath) && manifest.files.length > 0) {
+    var readManifest, data;
+    if (fs.existsSync(manifestFilePath)) {
+        readManifest = fs.readFileSync(manifestFilePath, {encoding:'utf8'});
+        data = JSON.parse(readManifest)
+    }
+    if ((!data || data["generated"] === undefined) && manifest.files.length > 0) {
         for (var i=0; i < manifest.files.length; i++) {
             this.logger.info("Writing out", path.join(filePath, manifest.files[i]) + " to Manifest file");
         }
         manifest["l10n_timestamp"] = new Date().getTime().toString();
+        manifest["generated"] = true;
         fs.writeFileSync(manifestFilePath, JSON.stringify(manifest, undefined, 4), 'utf8');
     }
 }
