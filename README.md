@@ -8,7 +8,7 @@ v1.6.1
 * Fixed to generate `ilibmanifest.json` file correctly even when a dummy file exists.
 
 v1.6.0
-* Added to timestampe in `ilibmanifest.json` file to support wee localization.
+* Added a timestamp in `ilibmanifest.json` file to support wee localization.
 * Updated to skip writing `ilibmanifest.json` creation logic if it has already been done in another plugin.
 
 v1.5.0
