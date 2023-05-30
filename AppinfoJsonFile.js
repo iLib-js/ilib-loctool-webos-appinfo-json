@@ -377,6 +377,10 @@ AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
 AppinfoJsonFile.prototype.localize = function(translations, locales) {
     // don't localize if there is no text
 
+    if ((typeof(translations) !== 'undefined') && (typeof(translations.getProjects()) !== 'undefined') && (translations.getProjects().includes("common"))) {
+        this.isloadCommonData = true;
+    }
+
     if (this.commonPath && !this.isloadCommonData) {
         this._loadCommonXliff(translations);
         this.isloadCommonData = true;
