@@ -44,6 +44,7 @@ var AppinfoJsonFile = function(props) {
     this.type = props.type;
     this.set = this.API.newTranslationSet(this.project ? this.project.sourceLocale : "zxx-XX");
     this.logger = this.API.getLogger("loctool.plugin.webOSAppinfoFile");
+    this.mapping = this.type.getMappings(this.pathName);
 
     if (props.project.settings.webos && props.project.settings.webos["commonXliff"]){
         this.commonPath = props.project.settings.webos["commonXliff"];
@@ -210,6 +211,41 @@ AppinfoJsonFile.prototype.getTranslationSet = function() {
 // we don't localize or write appinfo.json source files
 AppinfoJsonFile.prototype.write = function() {};
 
+AppinfoJsonFile.prototype.formatPath = function (template, parameters) {
+    var pathname = parameters.sourcepath || "";
+    var localepath = parameters.localepath;
+    var output = "";
+    var resourceDir = this.project.getResourceDirs("json")[0] || ".";
+
+    for (var i = 0; i < template.length; i++) {
+        if ( template[i] !== '[' ) {
+            output += template[i];
+        } else {
+            var start = ++i;
+            while (i < template.length && template[i] !== ']') {
+                i++;
+            }
+            var keyword = template.substring(start, i);
+            switch (keyword) {
+                case 'dir':
+                    output += path.dirname(pathname);
+                    break;
+                default:
+                case 'filename':
+                    output += path.basename(pathname);
+                    break;
+                case 'resDir':
+                    output += resourceDir;
+                    break;
+                case 'locale':
+                    output +=localepath;
+                    break;
+            }
+        }
+    }
+    return path.normalize(output);
+}
+
 
 /**
  * Return the location on disk where the version of this file localized
@@ -218,23 +254,23 @@ AppinfoJsonFile.prototype.write = function() {};
  * @returns {String} the localized path name
  */
 AppinfoJsonFile.prototype.getLocalizedPath = function(locale) {
-    var rootPath = path.join(this.project.target, this.project.getResourceDirs("json")[0] || ".");
-    var fullPath = "";
+    var mapping = this.mapping || this.type.getMappings(path.normalize(this.pathName || "")) || this.type.getDefaultMapping();
+    var lo = "";
     var rootLocale = "en-US";
-
     var splitLocale = locale.split("-");
     this.baseLocale = Utils.isBaseLocale(locale);
 
     if (this.baseLocale) {
         if (locale !== rootLocale) {
-            fullPath = splitLocale[0];
+            lo = splitLocale[0];
         }
     } else {
-        for (var i=0; i < splitLocale.length; i++) {
-            fullPath += "/"+ splitLocale[i];
-        }
+        lo = splitLocale.join("/");
     }
-    return path.join(rootPath, fullPath);
+    return this.formatPath(mapping.template, {
+        sourcepath: this.pathName,
+        localepath: lo
+    });
 };
 
 AppinfoJsonFile.prototype._addnewResource = function(text, key, locale) {
@@ -387,8 +423,9 @@ AppinfoJsonFile.prototype.localize = function(translations, locales) {
             var translatedOutput = this.localizeText(translations, locales[i]);
             if (translatedOutput !== "{}") {
                 var pathName = this.getLocalizedPath(locales[i]);
-                this.API.utils.makeDirs(pathName);
-                fs.writeFileSync(pathName + "/appinfo.json", translatedOutput, "utf-8");
+                var d = path.dirname(pathName);
+                this.API.utils.makeDirs(d);
+                fs.writeFileSync(pathName, translatedOutput, "utf-8");
             }
        }
     }
