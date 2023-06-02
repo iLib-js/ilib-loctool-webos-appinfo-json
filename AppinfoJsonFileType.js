@@ -71,7 +71,6 @@ AppinfoJsonFileType.prototype.getDefaultMapping = function() {
 
 var alreadyLoc = new RegExp(/(^|\/)([a-z][a-z])((\/[A-Z][a-z][a-z][a-z])?)(\/([A-Z][A-Z])?)?\//);
 
-
 /**
  * Return true if the given path is a appinfo.json file and is handled
  * by the current file type.
@@ -84,10 +83,7 @@ AppinfoJsonFileType.prototype.handles = function(pathName) {
     this.logger.debug("AppinfoJsonFileTyp handles " + pathName + "?");
     if (!pathName) return false;
     
-    //return (path.basename(pathName) === "appinfo.json") ? true : false
     var ret = (path.basename(pathName) === "appinfo.json") ? true : false;
-
-
     // check if it's an already localized file.
     if (ret) {
         var match = alreadyLoc.exec(pathName);
