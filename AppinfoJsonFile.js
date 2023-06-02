@@ -246,7 +246,6 @@ AppinfoJsonFile.prototype.formatPath = function (template, parameters) {
     return path.normalize(output);
 }
 
-
 /**
  * Return the location on disk where the version of this file localized
  * for the given locale should be written.
@@ -272,6 +271,11 @@ AppinfoJsonFile.prototype.getLocalizedPath = function(locale) {
         localepath: lo
     });
 };
+
+AppinfoJsonFile.prototype.getfullLocalizedPath = function(locale) {
+    var respath = this.getLocalizedPath(locale);
+    return path.join(this.project.target, respath);
+}
 
 AppinfoJsonFile.prototype._addnewResource = function(text, key, locale) {
     var newres = this.API.newResource({

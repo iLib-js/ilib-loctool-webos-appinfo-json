@@ -725,6 +725,35 @@ module.exports.appinfojsonfile = {
         "ar-JO","ar-KW"];
 
         var expected = [
+            "localized_json/af/appinfo.json",
+            "localized_json/am/appinfo.json",
+            "localized_json/ar/AE/appinfo.json",
+            "localized_json/ar/BH/appinfo.json",
+            "localized_json/ar/DJ/appinfo.json",
+            "localized_json/ar/DZ/appinfo.json",
+            "localized_json/ar/appinfo.json",
+            "localized_json/ar/IQ/appinfo.json",
+            "localized_json/ar/JO/appinfo.json",
+            "localized_json/ar/KW/appinfo.json",
+        ];
+
+        for (var i=0; i<locales.length;i++) {
+            jsrf = new AppinfoJsonFile({
+                project: p,
+                pathName: "appinfo.json",
+                type: ajft,
+                locale: locales[i]
+            });
+            test.equal(jsrf.getLocalizedPath(locales[i]), expected[i]);
+        }
+        test.done();
+    },
+    testJSONResourceFileGetResourceFullFilePathsSimple: function(test) {
+        test.expect(10);
+        var locales = ["af-ZA","am-ET","ar-AE","ar-BH","ar-DJ","ar-DZ","ar-EG","ar-IQ",
+        "ar-JO","ar-KW"];
+
+        var expected = [
             "test/testfiles/localized_json/af/appinfo.json",
             "test/testfiles/localized_json/am/appinfo.json",
             "test/testfiles/localized_json/ar/AE/appinfo.json",
@@ -740,11 +769,11 @@ module.exports.appinfojsonfile = {
         for (var i=0; i<locales.length;i++) {
             jsrf = new AppinfoJsonFile({
                 project: p,
-                pathName: "./test/testfiles/appinfo.json",
+                pathName: "appinfo.json",
                 type: ajft,
                 locale: locales[i]
             });
-            test.equal(jsrf.getLocalizedPath(locales[i]), expected[i]);
+            test.equal(jsrf.getfullLocalizedPath(locales[i]), expected[i]);
         }
         test.done();
     },
