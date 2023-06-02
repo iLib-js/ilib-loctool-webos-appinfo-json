@@ -64,5 +64,33 @@ module.exports.appinfojsonfiletype = {
         test.ok(ajft);
         test.ok(!ajft.handles("lappinfo.json"));
         test.done();
+    },
+    testAppinfoJsonFileTypeHandlesJonFalselocaleDir: function(test) {
+        test.expect(2);
+        var ajft = new AppinfoJsonFileType(p);
+        test.ok(ajft);
+        test.ok(!ajft.handles("ko/appinfo.json"));
+        test.done();
+    },
+    testAppinfoJsonFileTypeHandlesJonFalselocaleDir2: function(test) {
+        test.expect(2);
+        var ajft = new AppinfoJsonFileType(p);
+        test.ok(ajft);
+        test.ok(!ajft.handles("resources/zh/Hant/appinfo.json"));
+        test.done();
+    },
+    testAppinfoJsonFileTypeHandlesJonFalselocaleDir3: function(test) {
+        test.expect(2);
+        var ajft = new AppinfoJsonFileType(p);
+        test.ok(ajft);
+        test.ok(!ajft.handles("resources/en/GB/appinfo.json"));
+        test.done();
+    },
+    testAppinfoJsonFileTypeHandlesJonFalselocaleDir4: function(test) {
+        test.expect(2);
+        var ajft = new AppinfoJsonFileType(p);
+        test.ok(ajft);
+        test.ok(ajft.handles("sources/GB/appinfo.json"));
+        test.done();
     }
 };
