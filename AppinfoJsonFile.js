@@ -236,7 +236,8 @@ AppinfoJsonFile.prototype.getLocalizedPath = function(locale) {
         resourceDir: resDir,
         locale: lo
     });
-    // en/US file has to be located in the root
+
+    // the file under en/US directory, it has to be located in the resource root
     path = path.replace("/en\/US/", "/");
     return path;
 };
