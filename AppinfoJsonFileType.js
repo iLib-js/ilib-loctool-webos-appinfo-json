@@ -37,7 +37,7 @@ var AppinfoJsonFileType = function(project) {
 
 var defaultMappings = {
     "**/appinfo.json": {
-        "template": "[dir]/[resDir]/[locale]/[filename]"
+        "template": "[dir]/[resourceDir]/[localeDir]/[filename]"
     }
 }
 /**

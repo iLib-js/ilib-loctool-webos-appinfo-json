@@ -253,23 +253,27 @@ AppinfoJsonFile.prototype.formatPath = function (template, parameters) {
  * @returns {String} the localized path name
  */
 AppinfoJsonFile.prototype.getLocalizedPath = function(locale) {
-    var mapping = this.mapping || this.type.getMappings(path.normalize(this.pathName || "")) || this.type.getDefaultMapping();
-    var lo = "";
+    var mapping = this.mapping || this.type.getMappings(this.pathName || "") || this.type.getDefaultMapping();
+    
     var rootLocale = "en-US";
     var splitLocale = locale.split("-");
     this.baseLocale = Utils.isBaseLocale(locale);
+    var resDir = this.project.getResourceDirs("json")[0] || ".";
+    var lo = locale;
 
     if (this.baseLocale) {
         if (locale !== rootLocale) {
             lo = splitLocale[0];
         }
-    } else {
-        lo = splitLocale.join("/");
     }
-    return this.formatPath(mapping.template, {
+    var path = this.API.utils.formatPath(mapping.template, {
         sourcepath: this.pathName,
-        localepath: lo
+        resourceDir: resDir,
+        locale: lo
     });
+    // en/US file has to be located in the root
+    path = path.replace("/en\/US/", "/");
+    return path;
 };
 
 AppinfoJsonFile.prototype.getfullLocalizedPath = function(locale) {

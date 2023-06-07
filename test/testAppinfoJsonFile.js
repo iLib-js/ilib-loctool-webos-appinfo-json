@@ -38,7 +38,7 @@ var p = new CustomProject({
     "json": {
         "mappings": {
             "**/appinfo.json": {
-                "template": "[dir]/[resDir]/[locale]/[filename]"
+                "template": "[dir]/[resourceDir]/[localeDir]/[filename]"
             }
         }
     }

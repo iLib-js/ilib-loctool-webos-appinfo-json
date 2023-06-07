@@ -51,7 +51,7 @@
     },
     "devDependencies": {
         "assertextras": "^1.1.0",
-        "loctool": "2.20.3",
+        "loctool": "2.20.4444",
         "micromatch": "^4.0.5",
         "nodeunit": "^0.11.3"
     }
