@@ -211,41 +211,6 @@ AppinfoJsonFile.prototype.getTranslationSet = function() {
 // we don't localize or write appinfo.json source files
 AppinfoJsonFile.prototype.write = function() {};
 
-AppinfoJsonFile.prototype.formatPath = function (template, parameters) {
-    var pathname = parameters.sourcepath || "";
-    var localepath = parameters.localepath;
-    var output = "";
-    var resourceDir = this.project.getResourceDirs("json")[0] || ".";
-
-    for (var i = 0; i < template.length; i++) {
-        if ( template[i] !== '[' ) {
-            output += template[i];
-        } else {
-            var start = ++i;
-            while (i < template.length && template[i] !== ']') {
-                i++;
-            }
-            var keyword = template.substring(start, i);
-            switch (keyword) {
-                case 'dir':
-                    output += path.dirname(pathname);
-                    break;
-                default:
-                case 'filename':
-                    output += path.basename(pathname);
-                    break;
-                case 'resDir':
-                    output += resourceDir;
-                    break;
-                case 'locale':
-                    output +=localepath;
-                    break;
-            }
-        }
-    }
-    return path.normalize(output);
-}
-
 /**
  * Return the location on disk where the version of this file localized
  * for the given locale should be written.
