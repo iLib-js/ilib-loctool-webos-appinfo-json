@@ -35,7 +35,7 @@ var p = new CustomProject({
     },
     }, "./test/testfiles", {
     locales:["en-GB", "ko-KR"],
-    "json": {
+    "jsonMap": {
         "mappings": {
             "**/appinfo.json": {
                 "template": "[dir]/[resourceDir]/[localeDir]/[filename]"

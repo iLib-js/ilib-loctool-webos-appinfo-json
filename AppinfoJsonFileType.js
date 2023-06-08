@@ -51,9 +51,9 @@ AppinfoJsonFileType.prototype.getMappings = function(pathName) {
         return undefined;
     }
     var mappings, match;
-    var jsonSettings= this.project.settings && this.project.settings.json;
-    if (jsonSettings) {
-        mappings = jsonSettings.mappings || defaultMappings;
+    var jsonMapSettings = this.project.settings && this.project.settings.jsonMap;
+    if (jsonMapSettings) {
+        mappings = jsonMapSettings.mappings || defaultMappings;
         var patterns = Object.keys(mappings);
 
         if (patterns) {
