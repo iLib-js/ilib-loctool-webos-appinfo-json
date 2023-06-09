@@ -51,18 +51,53 @@ module.exports.appinfojsonfiletype = {
         test.ok(ajft.handles("foo/bar/appinfo.json"));
         test.done();
     },
-    testAppinfoJsonFileTypeHandlesJonFalse: function(test) {
+    testAppinfoJsonFileTypeHandlesJsonFalse: function(test) {
         test.expect(2);
         var ajft = new AppinfoJsonFileType(p);
         test.ok(ajft);
         test.ok(!ajft.handles("foo.js"));
         test.done();
     },
-    testAppinfoJsonFileTypeHandlesJonFalse1: function(test) {
+    testAppinfoJsonFileTypeHandlesJsonFalse1: function(test) {
         test.expect(2);
         var ajft = new AppinfoJsonFileType(p);
         test.ok(ajft);
         test.ok(!ajft.handles("lappinfo.json"));
+        test.done();
+    },
+    testAppinfoJsonFileTypeHandlesFalseWithlocaleDir: function(test) {
+        test.expect(2);
+        var ajft = new AppinfoJsonFileType(p);
+        test.ok(ajft);
+        test.ok(!ajft.handles("ko/appinfo.json"));
+        test.done();
+    },
+    testAppinfoJsonFileTypeHandlesFalseWithlocaleDir2: function(test) {
+        test.expect(2);
+        var ajft = new AppinfoJsonFileType(p);
+        test.ok(ajft);
+        test.ok(!ajft.handles("resources/zh/Hant/appinfo.json"));
+        test.done();
+    },
+    testAppinfoJsonFileTypeHandlesFalseWithlocaleDir3: function(test) {
+        test.expect(2);
+        var ajft = new AppinfoJsonFileType(p);
+        test.ok(ajft);
+        test.ok(!ajft.handles("resources/en/GB/appinfo.json"));
+        test.done();
+    },
+    testAppinfoJsonFileTypeHandlesWithlocaleDir4: function(test) {
+        test.expect(2);
+        var ajft = new AppinfoJsonFileType(p);
+        test.ok(ajft);
+        test.ok(ajft.handles("sources/GB/appinfo.json"));
+        test.done();
+    },
+    testAppinfoJsonFileTypeHandlesWithlocaleDir5: function(test) {
+        test.expect(2);
+        var ajft = new AppinfoJsonFileType(p);
+        test.ok(ajft);
+        test.ok(ajft.handles("res/Hant/appinfo.json"));
         test.done();
     }
 };

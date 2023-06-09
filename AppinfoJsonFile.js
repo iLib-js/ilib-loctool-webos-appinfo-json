@@ -44,6 +44,7 @@ var AppinfoJsonFile = function(props) {
     this.type = props.type;
     this.set = this.API.newTranslationSet(this.project ? this.project.sourceLocale : "zxx-XX");
     this.logger = this.API.getLogger("loctool.plugin.webOSAppinfoFile");
+    this.mapping = this.type.getMappings(this.pathName);
 
     if (props.project.settings.webos && props.project.settings.webos["commonXliff"]){
         this.commonPath = props.project.settings.webos["commonXliff"];
@@ -210,7 +211,6 @@ AppinfoJsonFile.prototype.getTranslationSet = function() {
 // we don't localize or write appinfo.json source files
 AppinfoJsonFile.prototype.write = function() {};
 
-
 /**
  * Return the location on disk where the version of this file localized
  * for the given locale should be written.
@@ -218,24 +218,34 @@ AppinfoJsonFile.prototype.write = function() {};
  * @returns {String} the localized path name
  */
 AppinfoJsonFile.prototype.getLocalizedPath = function(locale) {
-    var rootPath = path.join(this.project.target, this.project.getResourceDirs("json")[0] || ".");
-    var fullPath = "";
+    var mapping = this.mapping || this.type.getMappings(this.pathName || "") || this.type.getDefaultMapping();
+    
     var rootLocale = "en-US";
-
     var splitLocale = locale.split("-");
     this.baseLocale = Utils.isBaseLocale(locale);
+    var resDir = this.project.getResourceDirs("json")[0] || ".";
+    var lo = locale;
 
     if (this.baseLocale) {
         if (locale !== rootLocale) {
-            fullPath = splitLocale[0];
-        }
-    } else {
-        for (var i=0; i < splitLocale.length; i++) {
-            fullPath += "/"+ splitLocale[i];
+            lo = splitLocale[0];
         }
     }
-    return path.join(rootPath, fullPath);
+    var path = this.API.utils.formatPath(mapping.template, {
+        sourcepath: this.pathName,
+        resourceDir: resDir,
+        locale: lo
+    });
+
+    // the file under en/US directory, it has to be located in the resource root
+    path = path.replace("/en\/US/", "/");
+    return path;
 };
+
+AppinfoJsonFile.prototype.getfullLocalizedPath = function(locale) {
+    var respath = this.getLocalizedPath(locale);
+    return path.join(this.project.target, respath);
+}
 
 AppinfoJsonFile.prototype._addnewResource = function(text, key, locale) {
     var newres = this.API.newResource({
@@ -387,8 +397,9 @@ AppinfoJsonFile.prototype.localize = function(translations, locales) {
             var translatedOutput = this.localizeText(translations, locales[i]);
             if (translatedOutput !== "{}") {
                 var pathName = this.getLocalizedPath(locales[i]);
-                this.API.utils.makeDirs(pathName);
-                fs.writeFileSync(pathName + "/appinfo.json", translatedOutput, "utf-8");
+                var d = path.dirname(pathName);
+                this.API.utils.makeDirs(d);
+                fs.writeFileSync(pathName, translatedOutput, "utf-8");
             }
        }
     }

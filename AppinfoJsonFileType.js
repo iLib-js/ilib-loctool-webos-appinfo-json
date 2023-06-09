@@ -1,7 +1,7 @@
 /*
  * AppinfoFileType.js - Represents a collection of appinfo.json files
  *
- * Copyright (c) 2019-2020, 2022 JEDLSoft
+ * Copyright (c) 2019-2020, 2022-2023 JEDLSoft
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
  */
 
 var path = require("path");
+var mm = require("micromatch");
 var AppinfoJsonFile = require("./AppinfoJsonFile.js");
 
 var AppinfoJsonFileType = function(project) {
@@ -34,6 +35,42 @@ var AppinfoJsonFileType = function(project) {
     this.pseudo = this.API.newTranslationSet(project.getSourceLocale());
 };
 
+var defaultMappings = {
+    "**/appinfo.json": {
+        "template": "[dir]/[resourceDir]/[localeDir]/[filename]"
+    }
+}
+/**
+ * Return the mapping corresponding to this path.
+ * @param {String} pathName the path to check
+ * @returns {Object} the mapping object corresponding to the
+ * path or undefined if none of the mappings match
+ */
+AppinfoJsonFileType.prototype.getMappings = function(pathName) {
+    if (typeof(pathName) === "undefined") {
+        return undefined;
+    }
+    var mappings, match;
+    var jsonMapSettings = this.project.settings && this.project.settings.jsonMap;
+    if (jsonMapSettings) {
+        mappings = jsonMapSettings.mappings || defaultMappings;
+        var patterns = Object.keys(mappings);
+
+        if (patterns) {
+            match = patterns.find(function(pattern) {
+                return mm.isMatch(pathName, pattern);
+            });
+        }
+    }
+    return match && mappings[match];
+}
+
+AppinfoJsonFileType.prototype.getDefaultMapping = function() {
+    return defaultMappings["**/appinfo.json"];
+}
+
+var alreadyLoc = new RegExp(/(^|\/)([a-z][a-z])((\/[A-Z][a-z][a-z][a-z])?)(\/([A-Z][A-Z])?)?\//);
+
 /**
  * Return true if the given path is a appinfo.json file and is handled
  * by the current file type.
@@ -46,7 +83,16 @@ AppinfoJsonFileType.prototype.handles = function(pathName) {
     this.logger.debug("AppinfoJsonFileTyp handles " + pathName + "?");
     if (!pathName) return false;
     
-    return (path.basename(pathName) === "appinfo.json") ? true : false
+    var ret = (path.basename(pathName) === "appinfo.json") ? true : false;
+    // check if it's an already localized file.
+    if (ret) {
+        var match = alreadyLoc.exec(pathName);
+        if (match && match.length > 2) {
+            this.logger.debug("Already localized file");
+            ret = false;
+        }
+    }
+    return ret;
 };
 
 AppinfoJsonFileType.prototype.name = function() {
@@ -147,7 +193,7 @@ AppinfoJsonFileType.prototype.projectClose = function() {
     var resourceRoot = path.join(this.project.root, this.project.getResourceDirs("json")[0] || "resources");
     var manifestFile = new AppinfoJsonFile({
             project: this.project,
-            type: this.type
+            type: this
         });
     manifestFile.writeManifest(resourceRoot);
 };
