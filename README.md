@@ -8,7 +8,6 @@ v1.7.0
 * Added the `mappings` conguration which a mapping between file matchers and an object that gives info used to localize the files that match it.
 * Added feature not to do localization if the file is already located in localization directory.
 * Fixed not to load common data repeatedly if it's loaded from another plugin in a project.
-* Improved of performance by separating the part of reading common data file  and the part of saving  data in translationset
 
 v1.6.1
 * Fixed to generate `ilibmanifest.json` file correctly even when a dummy file exists.
