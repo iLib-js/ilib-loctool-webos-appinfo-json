@@ -393,10 +393,11 @@ AppinfoJsonFile.prototype.localize = function(translations, locales) {
 
     if (this.commonPath) {
         if (!this.isloadCommonData) {
-            this._loadCommonXliff();
+            this._loadCommonXliff(translations);
             this.isloadCommonData = true;
+        } else {
+            this._manipulateCommondata(translations);
         }
-        this._addCommonDataTranslationSet(translations);
     }
     
     for (var i=0; i < locales.length; i++) {
@@ -412,7 +413,7 @@ AppinfoJsonFile.prototype.localize = function(translations, locales) {
     }
 };
 
-AppinfoJsonFile.prototype._addCommonDataTranslationSet = function(tsdata) {
+AppinfoJsonFile.prototype._manipulateCommondata = function(tsdata) {
     var prots = this.project.getRepository().getTranslationSet();
     var commonts = tsdata.getBy({project: "common"});
     if (commonts.length > 0){
@@ -424,7 +425,7 @@ AppinfoJsonFile.prototype._addCommonDataTranslationSet = function(tsdata) {
     }
 }
 
-AppinfoJsonFile.prototype._loadCommonXliff = function() {
+AppinfoJsonFile.prototype._loadCommonXliff = function(tsdata) {
     if (fs.existsSync(this.commonPath)){
         var list = fs.readdirSync(this.commonPath);
     }
@@ -438,6 +439,15 @@ AppinfoJsonFile.prototype._loadCommonXliff = function() {
             var pathName = path.join(this.commonPath, file);
             var data = fs.readFileSync(pathName, "utf-8");
             commonXliff.deserialize(data);
+            var resources = commonXliff.getResources();
+
+            if (resources.length > 0){
+                this.commonPrjName = resources[0].getProject();
+                this.commonPrjType = resources[0].getDataType();
+                resources.forEach(function(res){
+                    tsdata.add(res);
+                }.bind(this));
+            }
         }.bind(this));
     }
 };
