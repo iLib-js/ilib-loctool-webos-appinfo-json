@@ -384,7 +384,7 @@ AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
   * translations
   * @param {Array.<String>} locales array of locales to translate to
   */
-AppinfoJsonFile.prototype.localize = function(translations, locales, num) {
+AppinfoJsonFile.prototype.localize = function(translations, locales) {
     // don't localize if there is no text
 
     if ((typeof(translations) !== 'undefined') && (typeof(translations.getProjects()) !== 'undefined') && (translations.getProjects().includes("common"))) {
@@ -393,12 +393,10 @@ AppinfoJsonFile.prototype.localize = function(translations, locales, num) {
 
     if (this.commonPath) {
         if (!this.isloadCommonData) {
-            this._loadCommonXliff(translations);
+            this._loadCommonXliff();
             this.isloadCommonData = true;
-        } else {
-            console.log("_manipulateCommonData ", num);
-            this._manipulateCommonData(translations);
         }
+        this._addCommonDatatoTranSet(translations);
     }
     
     for (var i=0; i < locales.length; i++) {
@@ -413,9 +411,10 @@ AppinfoJsonFile.prototype.localize = function(translations, locales, num) {
        }
     }
 };
-AppinfoJsonFile.prototype._manipulateCommonData = function(tsdata) {
+
+AppinfoJsonFile.prototype._addCommonDatatoTranSet = function(tsdata) {
     var prots = this.project.getRepository().getTranslationSet();
-    var commonts = tsdata.getBy({project:"common"});
+    var commonts = tsdata.getBy({project: "common"});
     if (commonts.length > 0){
         this.commonPrjName = commonts[0].getProject();
         this.commonPrjType = commonts[0].getDataType();
@@ -425,7 +424,7 @@ AppinfoJsonFile.prototype._manipulateCommonData = function(tsdata) {
     }
 }
 
-AppinfoJsonFile.prototype._loadCommonXliff = function(tsdata) {
+AppinfoJsonFile.prototype._loadCommonXliff = function() {
     if (fs.existsSync(this.commonPath)){
         var list = fs.readdirSync(this.commonPath);
     }
@@ -439,15 +438,6 @@ AppinfoJsonFile.prototype._loadCommonXliff = function(tsdata) {
             var pathName = path.join(this.commonPath, file);
             var data = fs.readFileSync(pathName, "utf-8");
             commonXliff.deserialize(data);
-            var resources = commonXliff.getResources();
-            
-            if (resources.length > 0){
-                this.commonPrjName = resources[0].getProject();
-                this.commonPrjType = resources[0].getDataType();
-                resources.forEach(function(res){
-                    tsdata.add(res);
-                }.bind(this));
-            }
         }.bind(this));
     }
 };
