@@ -396,7 +396,7 @@ AppinfoJsonFile.prototype.localize = function(translations, locales) {
             this._loadCommonXliff(translations);
             this.isloadCommonData = true;
         } else {
-            this._manipulateCommondata(translations);
+            this._addComonDatatoTranslationSet(translations);
         }
     }
     
@@ -413,7 +413,7 @@ AppinfoJsonFile.prototype.localize = function(translations, locales) {
     }
 };
 
-AppinfoJsonFile.prototype._manipulateCommondata = function(tsdata) {
+AppinfoJsonFile.prototype._addComonDatatoTranslationSet = function(tsdata) {
     var prots = this.project.getRepository().getTranslationSet();
     var commonts = tsdata.getBy({project: "common"});
     if (commonts.length > 0){
