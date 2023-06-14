@@ -440,7 +440,7 @@ AppinfoJsonFile.prototype._loadCommonXliff = function(tsdata) {
             var data = fs.readFileSync(pathName, "utf-8");
             commonXliff.deserialize(data);
             var resources = commonXliff.getResources();
-
+            
             if (resources.length > 0){
                 this.commonPrjName = resources[0].getProject();
                 this.commonPrjType = resources[0].getDataType();
