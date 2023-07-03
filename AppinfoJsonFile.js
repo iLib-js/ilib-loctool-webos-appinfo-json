@@ -387,11 +387,19 @@ AppinfoJsonFile.prototype.localizeText = function(translations, locale) {
 AppinfoJsonFile.prototype.localize = function(translations, locales) {
     // don't localize if there is no text
 
-    if (this.commonPath && !this.isloadCommonData) {
-        this._loadCommonXliff(translations);
+    if ((typeof(translations) !== 'undefined') && (typeof(translations.getProjects()) !== 'undefined') && (translations.getProjects().indexOf("common") !== -1)) {
         this.isloadCommonData = true;
     }
 
+    if (this.commonPath) {
+        if (!this.isloadCommonData) {
+            this._loadCommonXliff(translations);
+            this.isloadCommonData = true;
+        } else {
+            this._addComonDatatoTranslationSet(translations);
+        }
+    }
+    
     for (var i=0; i < locales.length; i++) {
        if (!this.project.isSourceLocale(locales[i])) {
             var translatedOutput = this.localizeText(translations, locales[i]);
@@ -404,6 +412,18 @@ AppinfoJsonFile.prototype.localize = function(translations, locales) {
        }
     }
 };
+
+AppinfoJsonFile.prototype._addComonDatatoTranslationSet = function(tsdata) {
+    var prots = this.project.getRepository().getTranslationSet();
+    var commonts = tsdata.getBy({project: "common"});
+    if (commonts.length > 0){
+        this.commonPrjName = commonts[0].getProject();
+        this.commonPrjType = commonts[0].getDataType();
+        commonts.forEach(function(ts){
+            prots.add(ts);
+        }.bind(this));
+    }
+}
 
 AppinfoJsonFile.prototype._loadCommonXliff = function(tsdata) {
     if (fs.existsSync(this.commonPath)){
