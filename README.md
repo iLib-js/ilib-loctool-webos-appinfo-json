@@ -5,8 +5,8 @@ allows it to read and localize `appinfo.json` file. This plugin is optimized for
 
 ## Release Notes
 v1.7.0
-* Added the `mappings` conguration which a mapping between file matchers and an object that gives info used to localize the files that match it.
-* Added feature not to do localization if the file is already located in localization directory.
+* Added the `mappings` configuration of the mapping which is a mapping between a file and an object that gives info used to localize the files that match it.
+* Added feature not to do localization if the file is already located in the localization directory.
 * Updated not to load common data repeatedly if it's loaded from another plugin in a project.
 
 v1.6.1
@@ -56,7 +56,7 @@ v1.3.0
 
 v1.2.12
 * Updated dependencies. (loctool: 2.17.0)
-* Fixed not to generate duplicated resource by comparing language default locale translation.
+* Fixed not to generate duplicated resources by comparing language default locale translation.
 
 v1.2.11
 * Updated dependencies. (loctool: 2.16.3)
@@ -104,7 +104,7 @@ v1.1.0
 * Added feature to generate `ilibmanifest.json` file
 
 v1.0.0
-* Implemented `appinfo.json` file localization. The appinfo.json file resides in an app's root directory and contains a single JSON object. Some Some properties data in a JSON object need to be localized, such as `title`. It is defined in the schema file. If you want to get more information regarding `appinfo.json` on webOS, Please visit this [link](https://www.webosose.org/docs/guides/development/configuration-files/appinfo-json/).
+* Implemented `appinfo.json` file localization. The appinfo.json file resides in an app's root directory and contains a single JSON object. Some properties data in a JSON object need to be localized, such as `title`. It is defined in the schema file. If you want to get more information regarding `appinfo.json` on webOS, Please visit this [link](https://www.webosose.org/docs/guides/development/configuration-files/appinfo-json/).
 
 
 ## License
