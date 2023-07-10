@@ -5,6 +5,7 @@ allows it to read and localize `appinfo.json` file. This plugin is optimized for
 
 ## Release Notes
 v1.7.0
+* Updated dependencies. (loctool: 2.21.0)
 * Added the `mappings` configuration of the mapping which is a mapping between a file and an object that gives info used to localize the files that match it.
 * Added feature not to do localization if the file is already located in the localization directory.
 * Updated not to load common data repeatedly if it's loaded from another plugin in a project.
