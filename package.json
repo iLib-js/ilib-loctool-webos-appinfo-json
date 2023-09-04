@@ -32,7 +32,7 @@
         "AppinfoJsonFileType.js",
         "AppinfoJsonFile.js",
         "schema",
-		"npm-shrinkwrap.json"
+        "npm-shrinkwrap.json"
     ],
     "repository": {
         "type": "git",
