@@ -48,7 +48,6 @@
         "node": ">=10.0.0"
     },
     "dependencies": {
-        "ilib": "^14.18.0",
         "loctool": "2.23.1",
         "micromatch": "^4.0.5"
     },

@@ -6,6 +6,7 @@ allows it to read and localize `appinfo.json` file. This plugin is optimized for
 ## Release Notes
 v1.7.3
 * Moved `loctool` and `micromatch` packages to `dependencies` in `package.json` because these are actually used in codes.
+* Removed `ilib` package to `dependencies` in `package.json` because it is not used in codes.
 
 v1.7.2
 * Updated dependencies. (loctool: 2.23.1)
