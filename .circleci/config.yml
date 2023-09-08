@@ -14,12 +14,12 @@ jobs:
           command: |
             rm -rf node_modules package-lock.json
             npm install
+            npm install loctool
       - run:
           name: Running all unit tests
           command: |
             node -v
             npm -v
-            npm install loctool
             npm run test
 
 workflows:
