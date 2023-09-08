@@ -302,7 +302,6 @@
             "version": "1.0.10",
             "resolved": "https://registry.npmjs.org/argparse/-/argparse-1.0.10.tgz",
             "integrity": "sha512-o5Roy6tNG4SL/FOkCAN6RzjiakZS25RLYFrcMttJqbdd8BWrnA+fGz57iN5Pb06pvBGvl5gQ0B48dJlslXvoTg==",
-            "dev": true,
             "dependencies": {
                 "sprintf-js": "~1.0.2"
             }
@@ -753,7 +752,6 @@
             "version": "4.0.1",
             "resolved": "https://registry.npmjs.org/esprima/-/esprima-4.0.1.tgz",
             "integrity": "sha512-eGuFFw7Upda+g4p+QHvnW0RyTX/SVeJBDM/gCtMARO0cLuT2HcEKnTPvhjV6aGeqrCB/sbNop0Kszm0jsaWU4A==",
-            "dev": true,
             "bin": {
                 "esparse": "bin/esparse.js",
                 "esvalidate": "bin/esvalidate.js"
@@ -1222,7 +1220,6 @@
             "version": "3.14.1",
             "resolved": "https://registry.npmjs.org/js-yaml/-/js-yaml-3.14.1.tgz",
             "integrity": "sha512-okMH7OXXJ7YrN9Ok3/SXrnu4iX9yOk+25nqX4imS2npuvTYDmo/QEZoqwZkYaIDk3jVvBOTOIEgEhaLOynBS9g==",
-            "dev": true,
             "dependencies": {
                 "argparse": "^1.0.7",
                 "esprima": "^4.0.0"
@@ -8808,8 +8805,7 @@
         "node_modules/sprintf-js": {
             "version": "1.0.3",
             "resolved": "https://registry.npmjs.org/sprintf-js/-/sprintf-js-1.0.3.tgz",
-            "integrity": "sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==",
-            "dev": true
+            "integrity": "sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g=="
         },
         "node_modules/sshpk": {
             "version": "1.17.0",
@@ -9618,7 +9614,6 @@
             "version": "1.0.10",
             "resolved": "https://registry.npmjs.org/argparse/-/argparse-1.0.10.tgz",
             "integrity": "sha512-o5Roy6tNG4SL/FOkCAN6RzjiakZS25RLYFrcMttJqbdd8BWrnA+fGz57iN5Pb06pvBGvl5gQ0B48dJlslXvoTg==",
-            "dev": true,
             "requires": {
                 "sprintf-js": "~1.0.2"
             }
@@ -9983,8 +9978,7 @@
         "esprima": {
             "version": "4.0.1",
             "resolved": "https://registry.npmjs.org/esprima/-/esprima-4.0.1.tgz",
-            "integrity": "sha512-eGuFFw7Upda+g4p+QHvnW0RyTX/SVeJBDM/gCtMARO0cLuT2HcEKnTPvhjV6aGeqrCB/sbNop0Kszm0jsaWU4A==",
-            "dev": true
+            "integrity": "sha512-eGuFFw7Upda+g4p+QHvnW0RyTX/SVeJBDM/gCtMARO0cLuT2HcEKnTPvhjV6aGeqrCB/sbNop0Kszm0jsaWU4A=="
         },
         "events-to-array": {
             "version": "1.1.2",
@@ -10362,7 +10356,6 @@
             "version": "3.14.1",
             "resolved": "https://registry.npmjs.org/js-yaml/-/js-yaml-3.14.1.tgz",
             "integrity": "sha512-okMH7OXXJ7YrN9Ok3/SXrnu4iX9yOk+25nqX4imS2npuvTYDmo/QEZoqwZkYaIDk3jVvBOTOIEgEhaLOynBS9g==",
-            "dev": true,
             "requires": {
                 "argparse": "^1.0.7",
                 "esprima": "^4.0.0"
@@ -16108,8 +16101,7 @@
         "sprintf-js": {
             "version": "1.0.3",
             "resolved": "https://registry.npmjs.org/sprintf-js/-/sprintf-js-1.0.3.tgz",
-            "integrity": "sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==",
-            "dev": true
+            "integrity": "sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g=="
         },
         "sshpk": {
             "version": "1.17.0",
