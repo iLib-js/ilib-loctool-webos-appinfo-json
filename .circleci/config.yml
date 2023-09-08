@@ -19,6 +19,7 @@ jobs:
           command: |
             node -v
             npm -v
+            npm install loctool
             npm run test
 
 workflows:
