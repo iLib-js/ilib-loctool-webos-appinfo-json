@@ -1,3 +1,7 @@
+
+> :warning: **Deprecation Notice** :warning:
+> This repository has been deprecated. The functionality of the ilib-loctool-webos-appinfo-json package has been integrated into ilib-loctool-webos-json. Please use the corresponding package from the [ilib-mono-webos](https://github.com/iLib-js/ilib-mono-webos) instead.
+
 # ilib-loctool-webos-appinfo-json
 
 ilib-loctool-webos-appinfo-json is a plugin for the loctool that
